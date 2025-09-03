@@ -209,42 +209,36 @@ impl<N: Network> TxFiller<N> for UrgentQueue {
         Ok(tx)
     }
 
-    async fn prepare<P, T>(
+    async fn prepare<P>(
         &self,
         _provider: &P,
         _tx: &<N as Network>::TransactionRequest,
     ) -> TransportResult<Self::Fillable>
     where
-        P: Provider<T, N>,
-        T: Transport + Clone,
+        P: Provider<N>,
     {
-        let data = match self
-            .client
-            .get("https://api.blocknative.com/gasprices/blockprices")
-            .send()
-            .await
-        {
-            Ok(res) => res,
-            Err(e) => {
-                return Err(RpcError::Transport(TransportErrorKind::Custom(Box::new(
-                    std::io::Error::new(
-                        std::io::ErrorKind::Other,
-                        format!("Failed to fetch gas price, {}", e),
-                    ),
-                ))));
-            }
-        };
+        println!("Fetching gas prices from Blocknative");
+        let data =
+            match self.client.get("https://api.blocknative.com/gasprices/blockprices").send().await
+            {
+                Ok(res) => res,
+                Err(e) => {
+                    return Err(RpcError::Transport(TransportErrorKind::Custom(Box::new(
+                        std::io::Error::new(
+                            std::io::ErrorKind::Other,
+                            format!("Failed to fetch gas price, {}", e),
+                        ),
+                    ))));
+                }
+            };
         let body = data.text().await.unwrap();
         let json = serde_json::from_str::<serde_json::Value>(&body).unwrap();
         let prices = &json["blockPrices"][0]["estimatedPrices"][0];
         let max_fee_per_gas = (prices["maxFeePerGas"].as_f64().unwrap() * 1e9) as u128;
         let max_priority_fee_per_gas =
             (prices["maxPriorityFeePerGas"].as_f64().unwrap() * 1e9) as u128;
-
-        let fillable = GasPriceFillable {
-            max_fee_per_gas,
-            max_priority_fee_per_gas,
-        };
+ 
+        let fillable = GasPriceFillable { max_fee_per_gas, max_priority_fee_per_gas };
         Ok(fillable)
     }
 }
