@@ -75,7 +75,7 @@ export const sidebar: Sidebar = [
       items: [
         {
           text: 'To alloy v1.0',
-          link: '/migrating-to-core-1.0/README',
+          link: '/migrating-to-core-v1',
           collapsed: true,
           items: [
             {

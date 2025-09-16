@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:alloy.rs)",
+      "WebFetch(domain:docs.rs)",
+      "Bash(bun run:*)"
+    ],
+    "deny": []
+  }
+}
