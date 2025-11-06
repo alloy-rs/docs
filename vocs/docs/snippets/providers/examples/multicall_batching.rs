@@ -28,10 +28,10 @@ async fn main() -> Result<()> {
         // The `CallBatchLayer` will wait for a certain amount of time before sending a request. See: <https://docs.rs/alloy-provider/latest/alloy_provider/layers/struct.CallBatchLayer.html#method.wait>.
         // This delay is added to aggregate any incoming `eth_calls` that can be together.
         // In this case, we set the delay to 10ms.
-        .layer(CallBatchLayer::new().wait(Duration::from_secs(10)))
+        .layer(CallBatchLayer::new().wait(Duration::from_millis(10)))
         // Can also use the shorthand `with_call_batching` on the build which set the delay to 1ms.
         // .with_call_batching()
-        .on_anvil_with_wallet_and_config(|a| a.fork("https://reth-ethereum.ithaca.xyz/rpc"))?;
+        .connect_anvil_with_wallet_and_config(|a| a.fork("https://reth-ethereum.ithaca.xyz/rpc"))?;
 
     // Create a new instance of the IWETH9 contract.
     let weth =
@@ -63,9 +63,8 @@ async fn main() -> Result<()> {
 
     println!("Block Number: {block_number}");
     println!(
-        "Alice's WETH balance: {}\nBob's WETH balance: {}\nTotal WETH supply: {}\nAlice's ETH
-    balance: {}",
-        alice_weth, bob_weth, total_supply, alice_eth
+        "Alice's WETH balance: {alice_weth}\nBob's WETH balance: {bob_weth}\nTotal WETH supply: {total_supply}\nAlice's ETH
+    balance: {alice_eth}"
     );
 
     Ok(())
