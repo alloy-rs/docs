@@ -56,9 +56,7 @@ struct MyProvider<P: Provider> {
 This is actually unnecessary because Alloy's Providers already implement internal reference counting. Instead, simply add the `Clone` bound when needed:
 
 ```rust
-struct MyProvider<P: Provider + Clone> {
-    inner: P,
-}
+
 ```
 
 This eliminates common boilerplate and prevents potential performance issues from double Arc-ing.
