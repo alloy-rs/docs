@@ -12,20 +12,33 @@ repository.workspace = true
 [lints]
 workspace = true
 
-[dev-dependencies]
+[dependencies]
+foundry-fork-db.workspace = true
 alloy.workspace = true
-# foundry-fork-db = "0.12"
+ethers.workspace = true
+alloy-evm.workspace = true
 
-# # reth
-# revm-primitives = { version = "17.0.0", default-features = false }
-# revm = { version = "21.0.0", default-features = false }
-# reth-db = { git = "https://github.com/paradigmxyz/reth", package = "reth-db", rev = "v1.3.8" }
-# reth-provider = { git = "https://github.com/paradigmxyz/reth", package = "reth-provider", rev = "v1.3.8" }
-# reth-node-types = { git = "https://github.com/paradigmxyz/reth", package = "reth-node-types", rev = "v1.3.8" }
-# reth-chainspec = { git = "https://github.com/paradigmxyz/reth", package = "reth-chainspec", rev = "v1.3.8" }
-# reth-node-ethereum = { git = "https://github.com/paradigmxyz/reth", package = "reth-node-ethereum", rev = "v1.3.8" }
+# reth
+revm = { workspace = true, default-features = false }
 
 eyre.workspace = true
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 serde = { workspace = true, features = ["derive"] }
-serde_json = { workspace = true }
+serde_json.workspace = true
+
+
+[[bin]]
+name = "alloy_profit"
+path = "examples/uniswap_u256/alloy_profit.rs"
+
+[[bin]]
+name = "alloy_simulation"
+path = "examples/uniswap_u256/alloy_simulation.rs"
+
+[[bin]]
+name = "ethers_profit"
+path = "examples/uniswap_u256/ethers_profit.rs"
+
+[lib]
+name = "uniswap_u256"
+path = "examples/uniswap_u256/lib.rs"

@@ -1,17 +1,22 @@
 //! Example of how to transfer ERC20 tokens from one account to another using a signed permit.
 
-use std::str::FromStr;
-
 use alloy::{
     network::EthereumWallet,
     node_bindings::Anvil,
     primitives::{Address, U256},
     providers::{Provider, ProviderBuilder},
-    signers::{local::PrivateKeySigner, Signer},
+    signers::{
+        local::{
+            coins_bip39::{English, Mnemonic},
+            PrivateKeySigner,
+        },
+        Signer,
+    },
     sol,
     sol_types::eip712_domain,
 };
 use eyre::Result;
+use std::str::FromStr;
 
 // Codegen from artifact.
 sol!(
@@ -64,11 +69,15 @@ async fn main() -> Result<()> {
     // Spin up a local Anvil node.
     // Ensure `anvil` is available in $PATH.
     let rpc_url = "https://reth-ethereum.ithaca.xyz/rpc";
-    let anvil = Anvil::new().fork(rpc_url).try_spawn()?;
+    // NOTE: ⚠️ Due to changes in EIP-7702 (see: https://getfoundry.sh/anvil/overview/#eip-7702-and-default-accounts),
+    // the default mnemonic cannot be used for signature-based testing. Instead, we use a custom
+    // mnemonic.
+    let mnemonic = generate_mnemonic()?;
+    let anvil = Anvil::new().fork(rpc_url).mnemonic(mnemonic).try_spawn()?;
 
     // Set up signers from the first two default Anvil accounts (Alice, Bob).
-    let alice: PrivateKeySigner = anvil.keys()[0].clone().into();
-    let bob: PrivateKeySigner = anvil.keys()[1].clone().into();
+    let alice: PrivateKeySigner = anvil.keys()[8].clone().into();
+    let bob: PrivateKeySigner = anvil.keys()[9].clone().into();
 
     // We can manage multiple signers with the same wallet
     let mut wallet = EthereumWallet::new(alice.clone());
@@ -76,7 +85,7 @@ async fn main() -> Result<()> {
 
     // Create a provider with both signers pointing to anvil
     let rpc_url = anvil.endpoint_url();
-    let provider = ProviderBuilder::new().wallet(wallet).on_http(rpc_url);
+    let provider = ProviderBuilder::new().wallet(wallet).connect_http(rpc_url);
 
     // Deploy the `ERC20Example` contract.
     let token = ERC20Example::deploy(provider.clone()).await?;
@@ -97,7 +106,7 @@ async fn main() -> Result<()> {
         .await?
         .watch()
         .await?;
-    println!("Sent approval: {}", tx_hash);
+    println!("Sent approval: {tx_hash}");
 
     // Create the EIP712 Domain and Permit
     let amount = U256::from(100);
@@ -127,7 +136,7 @@ async fn main() -> Result<()> {
         .await?
         .watch()
         .await?;
-    println!("Sent permit transfer: {}", tx_hash);
+    println!("Sent permit transfer: {tx_hash}");
 
     // Register the balances of Alice and Bob after the transfer.
     let alice_after_balance = token.balanceOf(alice.address()).call().await?;
@@ -138,4 +147,10 @@ async fn main() -> Result<()> {
     assert_eq!(bob_after_balance - bob_before_balance, amount);
 
     Ok(())
+}
+
+fn generate_mnemonic() -> Result<String> {
+    let mut rng = rand::thread_rng();
+    let mnemonic = Mnemonic::<English>::new_with_count(&mut rng, 12)?.to_phrase();
+    Ok(mnemonic)
 }
