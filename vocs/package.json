@@ -9,6 +9,7 @@
     "preview": "vocs preview"
   },
   "dependencies": {
+    "caniuse-lite": "^1.0.30001755",
     "react": "latest",
     "react-dom": "latest",
     "vocs": "latest"
