@@ -106,9 +106,10 @@ sol! { // [!code focus]
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    // Initialize a signer with a private key
+    // Initialize a signer with a private key and get address from it
     let signer: PrivateKeySigner =
         "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80".parse()?;
+    let from_address = signer.address();
 
     // Instantiate a provider with the signer
     let provider = ProviderBuilder::new() // [!code focus]
@@ -120,7 +121,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let weth = WETH9::new(weth_address, provider.clone()); // [!code focus]
 
     // Read initial balance
-    let from_address = signer.address();
     let initial_balance = weth.balanceOf(from_address).call().await?; // [!code focus]
     println!("Initial WETH balance: {} WETH", format_ether(initial_balance));
 
