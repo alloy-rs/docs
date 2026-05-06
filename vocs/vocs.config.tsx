@@ -55,7 +55,7 @@ export default defineConfig({
       link: 'https://docs.rs/alloy/latest/alloy/',
     },
     { 
-      text: '2.0.0',
+      text: '2.0.4',
       items: [ 
         { 
           text: 'Changelog', 
