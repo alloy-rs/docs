@@ -113,7 +113,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // Instantiate a provider with the signer
     let provider = ProviderBuilder::new() // [!code focus]
         .wallet(signer) // [!code focus]
-        .connect_anvil_with_config(|a| a.fork("https://reth-ethereum.ithaca.xyz/rpc"));
+        .connect_anvil_with_config(|a| a.fork("https://ethereum.reth.rs/rpc"));
 
     // Fund the random signer on the local Anvil fork
     provider // [!code focus]

@@ -10,7 +10,7 @@ use eyre::Result;
 #[tokio::main]
 async fn main() -> Result<()> {
     // Create a provider.
-    let rpc_url = "https://reth-ethereum.ithaca.xyz/rpc".parse()?;
+    let rpc_url = "https://ethereum.reth.rs/rpc".parse()?;
     let provider = ProviderBuilder::new().connect_http(rpc_url);
 
     // Get logs from the latest block

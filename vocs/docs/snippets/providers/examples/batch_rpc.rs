@@ -13,7 +13,7 @@ async fn main() -> Result<()> {
     // Ensure `anvil` is available in $PATH.
     let anvil = Anvil::new().spawn();
 
-    // Swap this out with a RPC_URL provider that supports JSON-RPC batch requests. e.g. https://reth-ethereum.ithaca.xyz/rpc
+    // Swap this out with a RPC_URL provider that supports JSON-RPC batch requests. e.g. https://ethereum.reth.rs/rpc
     let rpc_url = anvil.endpoint_url();
 
     // Create a HTTP transport.

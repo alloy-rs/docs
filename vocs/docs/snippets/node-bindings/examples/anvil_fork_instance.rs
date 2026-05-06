@@ -10,7 +10,7 @@ use eyre::Result;
 async fn main() -> Result<()> {
     // Spin up a forked Anvil node.
     // Ensure `anvil` is available in $PATH.
-    let rpc_url = "https://reth-ethereum.ithaca.xyz/rpc";
+    let rpc_url = "https://ethereum.reth.rs/rpc";
     let anvil = Anvil::new().fork(rpc_url).try_spawn()?;
     let provider = ProviderBuilder::new().connect_http(anvil.endpoint_url());
 

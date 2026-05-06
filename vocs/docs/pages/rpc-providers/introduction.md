@@ -20,7 +20,7 @@ The [`connect`](https://docs.rs/alloy/latest/alloy/providers/struct.ProviderBuil
 use alloy::providers::{Provider, ProviderBuilder}; // [!code focus]
 use std::error::Error;
 
-const RPC_URL: &str = "https://reth-ethereum.ithaca.xyz/rpc";
+const RPC_URL: &str = "https://ethereum.reth.rs/rpc";
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
 

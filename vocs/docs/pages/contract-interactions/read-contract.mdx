@@ -25,7 +25,7 @@ sol! { // [!code focus]
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     // Initialize the provider.
-    let provider = ProviderBuilder::new().connect("https://reth-ethereum.ithaca.xyz/rpc").await?;
+    let provider = ProviderBuilder::new().connect("https://ethereum.reth.rs/rpc").await?;
 
     // Instantiate the contract instance.
     let weth = address!("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2");
