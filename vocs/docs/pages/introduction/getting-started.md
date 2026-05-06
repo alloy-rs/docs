@@ -114,7 +114,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // Instantiate a provider with the signer
     let provider = ProviderBuilder::new() // [!code focus]
         .wallet(signer) // [!code focus]
-        .connect_anvil_with_config(|a| a.fork("https://reth-ethereum.ithaca.xyz/rpc"));
+        .connect_anvil_with_config(|a| a.fork("https://ethereum.reth.rs/rpc"));
 
     // Setup WETH contract instance
     let weth_address = address!("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2");

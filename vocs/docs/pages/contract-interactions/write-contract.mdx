@@ -41,7 +41,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         // Signs transactions before dispatching them.
         .wallet(signer) // Signs the transactions // [!code focus]
         // Forking mainnet using anvil to avoid spending real ETH.
-        .connect_anvil_with_config(|a| a.fork("https://reth-ethereum.ithaca.xyz/rpc"));
+        .connect_anvil_with_config(|a| a.fork("https://ethereum.reth.rs/rpc"));
 
     // Setup WETH contract instance.
     let weth = address!("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2");

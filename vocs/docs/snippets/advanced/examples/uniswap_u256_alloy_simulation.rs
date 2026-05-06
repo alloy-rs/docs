@@ -39,7 +39,7 @@ async fn main() -> Result<()> {
 
     let wallet_address = address!("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
     let provider = ProviderBuilder::new()
-        .connect_anvil_with_wallet_and_config(|a| a.fork("https://reth-ethereum.ithaca.xyz/rpc"))?;
+        .connect_anvil_with_wallet_and_config(|a| a.fork("https://ethereum.reth.rs/rpc"))?;
 
     let executor = FlashBotsMultiCall::deploy(provider.clone(), wallet_address).await?;
     let iweth = IERC20::new(WETH_ADDR, provider.clone());

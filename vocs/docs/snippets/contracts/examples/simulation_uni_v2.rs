@@ -39,7 +39,7 @@ sol!(
 async fn main() -> Result<()> {
     // Spawn `anvil` and fork mainnet
     // Make sure you have `anvil` in $PATH
-    let anvil = Anvil::new().fork("https://reth-ethereum.ithaca.xyz/rpc").try_spawn()?;
+    let anvil = Anvil::new().fork("https://ethereum.reth.rs/rpc").try_spawn()?;
 
     // Get the pool contract interfaces
     let uniswap_pair = get_uniswap_pair();

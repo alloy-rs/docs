@@ -6,7 +6,7 @@ use eyre::Result;
 #[tokio::main]
 async fn main() -> Result<()> {
     // Create a provider with the HTTP transport using the `reqwest` crate.
-    let rpc_url = "https://reth-ethereum.ithaca.xyz/rpc".parse()?;
+    let rpc_url = "https://ethereum.reth.rs/rpc".parse()?;
     let provider = ProviderBuilder::new().connect_http(rpc_url);
 
     // Get latest block number.

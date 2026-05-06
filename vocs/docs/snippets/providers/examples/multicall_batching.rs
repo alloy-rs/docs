@@ -31,7 +31,7 @@ async fn main() -> Result<()> {
         .layer(CallBatchLayer::new().wait(Duration::from_millis(10)))
         // Can also use the shorthand `with_call_batching` on the build which set the delay to 1ms.
         // .with_call_batching()
-        .connect_anvil_with_wallet_and_config(|a| a.fork("https://reth-ethereum.ithaca.xyz/rpc"))?;
+        .connect_anvil_with_wallet_and_config(|a| a.fork("https://ethereum.reth.rs/rpc"))?;
 
     // Create a new instance of the IWETH9 contract.
     let weth =
