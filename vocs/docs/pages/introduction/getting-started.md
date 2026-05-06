@@ -88,7 +88,7 @@ use alloy::{
         utils::{format_ether, Unit},
         U256,
     },
-    providers::ProviderBuilder,
+    providers::{ext::AnvilApi, ProviderBuilder},
     signers::local::PrivateKeySigner,
     sol,
 };
@@ -106,15 +106,22 @@ sol! { // [!code focus]
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    // Initialize a signer with a private key and get address from it
-    let signer: PrivateKeySigner =
-        "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80".parse()?;
+    // Initialize a random signer and get address from it
+    let signer = PrivateKeySigner::random(); // [!code focus]
     let from_address = signer.address();
 
     // Instantiate a provider with the signer
     let provider = ProviderBuilder::new() // [!code focus]
         .wallet(signer) // [!code focus]
         .connect_anvil_with_config(|a| a.fork("https://reth-ethereum.ithaca.xyz/rpc"));
+
+    // Fund the random signer on the local Anvil fork
+    provider // [!code focus]
+        .anvil_set_balance( // [!code focus]
+            from_address, // [!code focus]
+            Unit::ETHER.wei().saturating_mul(U256::from(100)), // [!code focus]
+        ) // [!code focus]
+        .await?; // [!code focus]
 
     // Setup WETH contract instance
     let weth_address = address!("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2");
