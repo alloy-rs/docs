@@ -25,3 +25,7 @@
 #home-install .vocs_Code {
   font-size: 18px;
 }
+
+.alloy_UsedByLogos .vocs_Sponsors_image {
+  filter: none !important;
+}
