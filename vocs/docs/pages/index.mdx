@@ -7,7 +7,7 @@ layout: landing
 showLogo: false
 ---
 
-import { HomePage } from "vocs";
+import { HomePage, Sponsors } from "vocs/components";
  
 <div className="max-w-[1120px] mx-auto vp-doc relative px-[24px] mb-[64px] mt-[32px] md:px-0 md:mb-[32px]">
   <div className="pt-[48px] max-sm:pt-0">
@@ -380,29 +380,6 @@ Join the Community
 
 # Supporters
 
-<div className="vocs_Sponsors_row grid grid-cols-2 gap-4 max-sm:grid-cols-1" style={{ "--vocs_Sponsors_height": "120px" }}>
-  <a
-    href="https://paradigm.xyz"
-    className="vocs_Sponsors_column vocs_Sponsors_sponsor vocs_Link vocs_Link_styleless"
-  >
-    <img
-      alt="Paradigm"
-      className="vocs_Sponsors_image"
-      src="https://raw.githubusercontent.com/wevm/.github/main/content/sponsors/paradigm-light.svg"
-      style={{ height: "var(--vocs_Sponsors_height)" }}
-    />
-  </a>
-  <a
-    href="https://ithaca.xyz"
-    className="vocs_Sponsors_column vocs_Sponsors_sponsor vocs_Link vocs_Link_styleless"
-  >
-    <img
-      alt="Ithaca"
-      className="vocs_Sponsors_image"
-      src="https://raw.githubusercontent.com/wevm/.github/main/content/sponsors/ithaca-light.svg"
-      style={{ height: "var(--vocs_Sponsors_height)" }}
-    />
-  </a>
-</div>
+<Sponsors />
  
 </article>

@@ -1,4 +1,4 @@
-import type { Sidebar } from "./types";
+import { Sidebar } from "vocs";
 import { exampleItems } from "./example-items";
 
 export const sidebar: Sidebar = [
