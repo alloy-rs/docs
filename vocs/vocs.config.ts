@@ -3,6 +3,7 @@ import { sidebar } from './sidebar'
 export default defineConfig({
   title: 'alloy',
   logoUrl: '/alloy-logo.png',
+  renderStrategy: 'full-static',
   srcDir: 'docs',
   sidebar,
   iconUrl: { light: '/favicon.png', dark: '/favicon.png' },
