@@ -32,7 +32,7 @@ jobs:
         if: github.ref_name == 'main' && github.event_name == 'push'
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "vocs/docs/dist"
+          path: "vocs/dist/public"
 
   deploy:
     # Only deploy if a push to main
