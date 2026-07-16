@@ -82,6 +82,7 @@ export const exampleItems: SidebarItem[] = [
         { text: 'Multicall Builder', link: '/examples/providers/multicall' },
         { text: 'WS', link: '/examples/providers/ws' },
         { text: 'WS with authentication', link: '/examples/providers/ws_with_auth' },
+        { text: 'WS with configurable reconnects', link: '/examples/providers/ws_with_reconnect' },
         { text: 'JSON-RPC Batch Request', link: '/examples/providers/batch_rpc' },
         { text: 'Consensus x RPC types unification', link: '/examples/providers/embed_consensus_rpc' },
         { text: 'Basic provider with no fillers', link: '/examples/providers/basic_provider' },
@@ -90,6 +91,7 @@ export const exampleItems: SidebarItem[] = [
         { text: 'Query contract storage', link: '/examples/queries/query_contract_storage' },
         { text: 'Query contract deployed bytecode', link: '/examples/queries/query_deployed_bytecode' },
         { text: 'Query logs', link: '/examples/queries/query_logs' },
+        { text: 'Query logs in chunks', link: '/examples/queries/query_logs_chunked' },
     ]},
     { text: 'The `sol!` macro', collapsed: true, link: '/examples/sol-macro/README', items: [
         { text: 'Contracts', link: '/examples/contracts/deploy_from_contract' },
@@ -102,6 +104,7 @@ export const exampleItems: SidebarItem[] = [
     ]},
     { text: 'Subscriptions', collapsed: true, link: '/examples/subscriptions/README', items: [
         { text: 'Subscribe and watch blocks', link: '/examples/subscriptions/subscribe_blocks' },
+        { text: 'Resume a canonical block stream', link: '/examples/subscriptions/watch_canonical_blocks' },
         { text: 'Watch and poll for contract event logs', link: '/examples/subscriptions/poll_logs' },
         { text: 'Subscribe and listen for specific contract event logs', link: '/examples/subscriptions/subscribe_logs' },
         { text: 'Subscribe and listen for all contract event logs', link: '/examples/subscriptions/subscribe_all_logs' },
@@ -110,6 +113,7 @@ export const exampleItems: SidebarItem[] = [
     ]},
     { text: 'Transactions', collapsed: true, link: '/examples/transactions/README', items: [
         { text: 'Decode input', link: '/examples/transactions/decode_input' },
+        { text: 'Decode a receipt log', link: '/examples/transactions/decode_receipt_log' },
         { text: 'Encode and decode EIP-1559 transaction', link: '/examples/transactions/encode_decode_eip1559' },
         { text: 'Get gas price in USD', link: '/examples/transactions/gas_price_usd' },
         { text: 'Simulate using `debug_traceCallMany`', link: '/examples/transactions/debug_trace_call_many' },
@@ -139,6 +143,7 @@ export const exampleItems: SidebarItem[] = [
         { text: 'Verify message', link: '/examples/wallets/verify_message' },
         { text: 'Sign permit hash', link: '/examples/wallets/sign_permit_hash' },
         { text: 'Trezor signer', link: '/examples/wallets/trezor_signer' },
+        { text: 'Turnkey signer', link: '/examples/wallets/turnkey_signer' },
         { text: 'Yubi signer', link: '/examples/wallets/yubi_signer' },
         { text: 'Keystore signer', link: '/examples/wallets/keystore_signer' },
         { text: 'Create keystore', link: '/examples/wallets/create_keystore' },

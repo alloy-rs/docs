@@ -6,6 +6,8 @@
 - `vocs/versions.ts` is the single version source for hand-written dependency snippets.
 - Generated example pages and snippets come from `alloy-rs/examples`. Do not edit files carrying a
   `DO NOT EDIT` header; update the source example or template and run `scripts/update.sh`.
+- Set `EXAMPLES_SOURCE` to an absolute local examples checkout when validating a stacked examples
+  change before it lands on the default branch.
 - Verify exact Alloy symbols and feature gates against the matching release on docs.rs or the
   `alloy-rs/alloy` source. The website is explanatory documentation, not the API definition.
 
