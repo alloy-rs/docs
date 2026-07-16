@@ -117,7 +117,16 @@ To see the book change live run:
 cd vocs && bun dev
 ```
 
-To perform an update of generated output inspect and run `./scripts/update.sh`.
+To refresh generated example pages and snippets from the examples submodule, inspect and run
+`./scripts/update.sh`. To preview an examples change before it reaches the default branch, point the
+generator at a local checkout:
+
+```sh
+EXAMPLES_SOURCE=/absolute/path/to/examples ./scripts/update.sh
+```
+
+The generator replaces only example-owned snippet categories and preserves hand-written groups
+such as installation snippets.
 
 To add a new page, create it under `./vocs/docs/pages` and add it to
 `./vocs/sidebar.ts` when it should appear in the primary navigation.

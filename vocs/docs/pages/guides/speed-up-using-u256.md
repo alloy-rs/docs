@@ -6,7 +6,8 @@ description: Achieve up to 2x faster calculations by using Alloy's optimized U25
 
 [Alloy](https://alloy.rs) is a successor to the deprecated [ethers-rs](https://github.com/gakonst/ethers-rs). In this guide, we will describe how you can reap the benefits of its better performance with minimal codebase changes to ethers-rs project. We will also implement an atomic UniswapV2 arbitrage simulation to showcase how different parts of the Alloy stack fit together.
 
-Read on to learn how to speed up your ethers-rs project calculations by **up to 2x faster%** with a simple type change.
+Read on to learn how the benchmark in the examples repository measures Alloy's `U256` at **up to
+2× faster** than ethers-rs for this workload.
 
 ## How to calculate optimal UniV2 arbitrage profit?
 
@@ -16,11 +17,13 @@ To execute an atomic arbitrage swap, you have to calculate the required input an
 
 Most publicly available bots use an iterative search function to find an optimal amount of input value. However, UniswapV2 constant product formula makes it possible to calculate a profitable input amount without multiple iterations. We will borrow the implementation of this formula [from Flashbots simple-blind-arbitrage repo](https://github.com/flashbots/simple-blind-arbitrage). You can find a step-by-step explanation of how to derive the formula [in this YouTube video](https://www.youtube.com/watch?v=9EKksG-fF1k).
 
-All the code examples for this post are available in [this repo](https://github.com/alloy-rs/examples/tree/main/examples/advanced/examples/uniswap_u256).
+All the code examples for this post are available in the
+[advanced examples](https://github.com/alloy-rs/examples/tree/main/examples/advanced/examples), with
+shared implementations in the [`helpers` crate](https://github.com/alloy-rs/examples/tree/main/helpers/src).
 
 Let's start with implementing a struct representing a Uniswap pool and a few helper functions in Alloy:
 
-[ `alloy_helpers.rs`](https://github.com/alloy-rs/examples/tree/main/examples/advanced/examples/uniswap_u256/helpers)
+[`helpers/src/alloy.rs`](https://github.com/alloy-rs/examples/blob/main/helpers/src/alloy.rs)
 
 ```rust
 use alloy::primitives::{address, Address, U256};
@@ -93,7 +96,7 @@ Instead, we can use the `get_amount_in` method, which does more number crunching
 
 In the following example, we use a mocked pool reserve value for [UniswapV2](https://etherscan.io/address/0xA478c2975Ab1Ea89e8196811F51A7B7Ade33eB11) and [SushiSwap](https://etherscan.io/address/0xC3D03e4F041Fd4cD388c549Ee2A29a9E5075882f) WETH/DAI Mainnet pools to simulate a profitable arbitrage opportunity.
 
-[ `examples/alloy_profit.rs`](https://github.com/alloy-rs/examples/blob/main/examples/advanced/examples/uniswap_u256/alloy_profit.rs)
+[`uniswap_u256_alloy_profit.rs`](https://github.com/alloy-rs/examples/blob/main/examples/advanced/examples/uniswap_u256_alloy_profit.rs)
 
 ```rust
 fn main() -> Result<()> {
@@ -129,7 +132,7 @@ fn main() -> Result<()> {
 You can run it like that:
 
 ```
-cargo run --package examples-advanced --bin alloy_profit
+cargo run --locked -p examples-advanced --example uniswap_u256_alloy_profit
 ```
 
 It should produce:
@@ -144,7 +147,10 @@ We've calculated a profitable Arbitrage for our mocked Uniswap pool reserves!
 
 ## "ethers-rs good, Alloy better!"
 
-If you compare the implementation of [`alloy_helpers.rs`](https://github.com/alloy-rs/examples/blob/main/examples/advanced/examples/uniswap_u256/helpers/alloy.rs) with [`ethers_helpers.rs`](https://github.com/alloy-rs/examples/blob/main/examples/advanced/examples/uniswap_u256/helpers/ethers.rs), you will notice that they are almost identical. Rewriting your project calculations from ethers-rs to Alloy U256 should be possible with a very reasonable development effort. But is it worth it?
+If you compare the implementations in [`helpers/src/alloy.rs`](https://github.com/alloy-rs/examples/blob/main/helpers/src/alloy.rs)
+and [`helpers/src/ethers.rs`](https://github.com/alloy-rs/examples/blob/main/helpers/src/ethers.rs),
+you will notice that they are almost identical. Rewriting your project calculations from ethers-rs
+to Alloy `U256` should be possible with a very reasonable development effort. But is it worth it?
 
 It's high time to compare the performance of legacy ethers-rs U256 with the brand-new (based on the [ruint crate](https://crates.io/crates/ruint)) Alloy integer type. We will use the [criterion.rs crate](https://github.com/bheisler/criterion.rs). It generates reliable benchmarks by executing millions of iterations and turning off some compiler optimizations.
 
@@ -160,7 +166,7 @@ This means that you can significantly improve the performance of your ethers-rs 
 
 Here's how you can convert between the two types:
 
-[ `alloy_helpers.rs`](https://github.com/alloy-rs/examples/blob/main/examples/advanced/examples/uniswap_u256/helpers/alloy.rs)
+[`helpers/src/alloy.rs`](https://github.com/alloy-rs/examples/blob/main/helpers/src/alloy.rs)
 
 ```rust
 use alloy::primitives::U256;
@@ -181,7 +187,7 @@ impl ToEthers for U256 {
 }
 ```
 
-[ `ethers_helpers.rs`](https://github.com/alloy-rs/examples/blob/main/examples/advanced/examples/uniswap_u256/helpers/ethers.rs)
+[`helpers/src/ethers.rs`](https://github.com/alloy-rs/examples/blob/main/helpers/src/ethers.rs)
 
 ```rust
 use ethers::types::U256;
@@ -212,11 +218,11 @@ Mocking the forked blockchain storage slots is an insanely useful technique. It 
 
 Here are the helper methods that we'll use:
 
-[ `alloy_helpers.rs`](https://github.com/alloy-rs/examples/blob/main/examples/advanced/examples/uniswap_u256/helpers/alloy.rs)
+[`helpers/src/alloy.rs`](https://github.com/alloy-rs/examples/blob/main/helpers/src/alloy.rs)
 
 ```rust
 pub async fn set_hash_storage_slot<P: Provider>(
-    anvil_provider: &P,
+    anvil_provider: P,
     address: Address,
     hash_slot: U256,
     hash_key: Address,
@@ -224,9 +230,7 @@ pub async fn set_hash_storage_slot<P: Provider>(
 ) -> Result<()> {
     let hashed_slot = keccak256((hash_key, hash_slot).abi_encode());
 
-    anvil_provider
-        .anvil_set_storage_at(address, hashed_slot.into(), value.into())
-        .await?;
+    anvil_provider.anvil_set_storage_at(address, hashed_slot.into(), value.into()).await?;
 
     Ok(())
 }
@@ -236,7 +240,7 @@ We will leverage a custom Anvil RPC method, `anvil_setStorageAt`, to mock EVM st
 
 And here's our simulation:
 
-[ `alloy_simulation.rs`](https://github.com/alloy-rs/examples/blob/main/examples/advanced/examples/uniswap_u256/alloy_simulation.rs)
+[`uniswap_u256_alloy_simulation.rs`](https://github.com/alloy-rs/examples/blob/main/examples/advanced/examples/uniswap_u256_alloy_simulation.rs)
 
 ```rust
 // imports omitted for brevity
@@ -255,7 +259,7 @@ sol!(
 sol!(
     #[sol(rpc)]
     FlashBotsMultiCall,
-    "artifacts/FlashBotsMultiCall.json"
+    "examples/abi/FlashBotsMultiCall.json"
 );
 
 #[tokio::main]
@@ -264,16 +268,16 @@ async fn main() -> Result<()> {
     let sushi_pair = get_sushi_pair();
 
     let wallet_address = address!("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
-    let rpc_url = std::env::var("RPC_URL")?;
-    let provider = ProviderBuilder::new()
-        .connect_anvil_with_wallet_and_config(|anvil| anvil.fork(rpc_url))?;
+    let rpc_url = rpc_url()?;
+    let provider =
+        ProviderBuilder::new().connect_anvil_with_wallet_and_config(|anvil| anvil.fork(rpc_url))?;
 
     let executor = FlashBotsMultiCall::deploy(provider.clone(), wallet_address).await?;
     let iweth = IERC20::new(WETH_ADDR, provider.clone());
 
     // Mock WETH balance for executor contract
     set_hash_storage_slot(
-        &anvil_provider,
+        provider.clone(),
         WETH_ADDR,
         U256::from(3),
         *executor.address(),
@@ -282,7 +286,7 @@ async fn main() -> Result<()> {
     .await?;
 
     // Mock reserves for Uniswap pair
-    anvil_provider
+    provider
         .anvil_set_storage_at(
             uniswap_pair.address,
             U256::from(8), // getReserves slot
@@ -294,7 +298,7 @@ async fn main() -> Result<()> {
 
     // Mock WETH balance for Uniswap pair
     set_hash_storage_slot(
-        &anvil_provider,
+        &provider,
         WETH_ADDR,
         U256::from(3),
         uniswap_pair.address,
@@ -304,7 +308,7 @@ async fn main() -> Result<()> {
 
     // Mock DAI balance for Uniswap pair
     set_hash_storage_slot(
-        &anvil_provider,
+        &provider,
         DAI_ADDR,
         U256::from(2),
         uniswap_pair.address,
@@ -313,7 +317,7 @@ async fn main() -> Result<()> {
     .await?;
 
     // Mock reserves for Sushi pair
-    anvil_provider
+    provider
         .anvil_set_storage_at(
             sushi_pair.address,
             U256::from(8), // getReserves slot
@@ -325,7 +329,7 @@ async fn main() -> Result<()> {
 
     // Mock WETH balance for Sushi pair
     set_hash_storage_slot(
-        &anvil_provider,
+        &provider,
         WETH_ADDR,
         U256::from(3),
         sushi_pair.address,
@@ -335,7 +339,7 @@ async fn main() -> Result<()> {
 
     // Mock DAI balance for Sushi pair
     set_hash_storage_slot(
-        &anvil_provider,
+        &provider,
         DAI_ADDR,
         U256::from(2),
         sushi_pair.address,
@@ -361,14 +365,14 @@ async fn main() -> Result<()> {
 
     let swap1 = swapCall {
         amount0Out: dai_amount_out,
-        amount1Out: U256::from(0),
+        amount1Out: U256::ZERO,
         to: sushi_pair.address,
         data: Bytes::new(),
     }
     .abi_encode();
 
     let swap2 = swapCall {
-        amount0Out: U256::from(0),
+        amount0Out: U256::ZERO,
         amount1Out: weth_amount_out,
         to: *executor.address(),
         data: Bytes::new(),
@@ -377,15 +381,14 @@ async fn main() -> Result<()> {
 
     let arb_calldata = FlashBotsMultiCall::uniswapWethCall {
         _wethAmountToFirstMarket: weth_amount_in,
-        _ethAmountToCoinbase: U256::from(0),
+        _ethAmountToCoinbase: U256::ZERO,
         _targets: vec![uniswap_pair.address, sushi_pair.address],
         _payloads: vec![Bytes::from(swap1), Bytes::from(swap2)],
     }
     .abi_encode();
 
-    let arb_tx = TransactionRequest::default()
-        .with_to(*executor.address())
-        .with_input(arb_calldata);
+    let arb_tx =
+        TransactionRequest::default().with_to(*executor.address()).with_input(arb_calldata);
 
     let pending = provider.send_transaction(arb_tx).await?;
     pending.get_receipt().await?;
@@ -402,7 +405,8 @@ It uses a `FlashBotsMultiCall` contract from the [Flashbots simple-arbitrage rep
 You can execute this simulation by running the following command on the examples repo:
 
 ```
-cargo run --package examples-advanced --bin alloy_simulation
+RPC_URL=https://your-ethereum-endpoint \
+  cargo run --locked -p examples-advanced --example uniswap_u256_alloy_simulation
 ```
 
 It should produce:
