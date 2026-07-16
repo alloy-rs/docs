@@ -10,24 +10,28 @@ const pagesDir = join(root, 'vocs/docs/pages')
 const examplesDir = join(root, 'lib/examples')
 const baseUrl = 'https://alloy.rs'
 
-function proseLines(markdown: string, transform: (line: string) => string): string {
+function proseSegments(markdown: string, transform: (segment: string) => string): string {
+  const fence = /^[ \t]*(?:```|~~~).*$/gm
   let inFence = false
+  let cursor = 0
+  let output = ''
 
-  return markdown
-    .split('\n')
-    .map((line) => {
-      if (/^\s*(```|~~~)/.test(line)) {
-        inFence = !inFence
-        return line
-      }
-      return inFence ? line : transform(line)
-    })
-    .join('\n')
+  for (const match of markdown.matchAll(fence)) {
+    const index = match.index
+    const segment = markdown.slice(cursor, index)
+    output += inFence ? segment : transform(segment)
+    output += match[0]
+    cursor = index + match[0].length
+    inFence = !inFence
+  }
+
+  const segment = markdown.slice(cursor)
+  return output + (inFence ? segment : transform(segment))
 }
 
 function absoluteLinks(markdown: string): string {
-  return proseLines(markdown, (line) =>
-    line
+  return proseSegments(markdown, (segment) =>
+    segment
       .replace(/(!?\[[^\]]*]\()\/(?!\/)/g, `$1${baseUrl}/`)
       .replace(/(\b(?:href|src)\s*=\s*["'])\/(?!\/)/g, `$1${baseUrl}/`),
   )
@@ -35,10 +39,10 @@ function absoluteLinks(markdown: string): string {
 
 function unresolvedLinks(markdown: string): string[] {
   const unresolved: string[] = []
-  proseLines(markdown, (line) => {
+  proseSegments(markdown, (segment) => {
     const targets = [
-      ...[...line.matchAll(/!?\[[^\]]*]\((<?[^)\s>]+>?)/g)].map((match) => match[1]),
-      ...[...line.matchAll(/\b(?:href|src)\s*=\s*["']([^"']+)["']/g)].map(
+      ...[...segment.matchAll(/!?\[[^\]]*]\((<?[^)\s>]*>?)/g)].map((match) => match[1]),
+      ...[...segment.matchAll(/\b(?:href|src)\s*=\s*["']([^"']*)["']/g)].map(
         (match) => match[1],
       ),
     ]
@@ -46,9 +50,9 @@ function unresolvedLinks(markdown: string): string[] {
     for (const rawTarget of targets) {
       const target = rawTarget.replace(/^<|>$/g, '')
       if (/^[a-z][a-z+.-]*:/i.test(target) || target.startsWith('//')) continue
-      unresolved.push(target)
+      unresolved.push(target || '(empty target)')
     }
-    return line
+    return segment
   })
   return unresolved
 }
