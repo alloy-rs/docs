@@ -6,6 +6,14 @@ const generatedSnippets = new Map([
     `alloy = "${versions.alloy}"\n`,
   ],
   [
+    new URL('../vocs/docs/snippets/installation/alloy-full.toml', import.meta.url),
+    `alloy = { version = "${versions.alloy}", features = ["full"] }\n`,
+  ],
+  [
+    new URL('../vocs/docs/snippets/installation/alloy-minimal.toml', import.meta.url),
+    `alloy = { version = "${versions.alloy}", default-features = false, features = ["sol-types"] }\n`,
+  ],
+  [
     new URL('../vocs/docs/snippets/installation/individual-crates.toml', import.meta.url),
     [
       '[dependencies]',

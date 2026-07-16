@@ -1,0 +1,1 @@
+alloy = { version = "2.1.1", default-features = false, features = ["sol-types"] }
