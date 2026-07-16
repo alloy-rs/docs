@@ -143,9 +143,10 @@ sol!(
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    let provider = ProviderBuilder::new().connect("https://ethereum.reth.rs/rpc").await?;
+    let rpc_url = std::env::var("RPC_URL")?;
+    let provider = ProviderBuilder::new().connect(&rpc_url).await?;
     let iweth = IERC20::new(address!("C02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"), provider.clone());
-    let name = weth.name().call().await?;
+    let name = iweth.name().call().await?;
     println!("Name: {}", name); // => Wrapped Ether
 }
 ```
@@ -194,7 +195,8 @@ sol!(
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    let anvil = Anvil::new().fork("https://ethereum.reth.rs/rpc").try_spawn()?;
+    let rpc_url = std::env::var("RPC_URL")?;
+    let anvil = Anvil::new().fork(rpc_url).try_spawn()?;
     let wallet_address = anvil.addresses()[0];
     let provider = ProviderBuilder::new().connect(anvil.endpoint()).await?;
     let executor = FlashBotsMultiCall::deploy(provider.clone(), wallet_address).await?;

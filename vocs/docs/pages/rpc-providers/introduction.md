@@ -14,18 +14,20 @@ Alloy provides concrete transport implementations for [`HTTP`](/rpc-providers/ht
 
 The [`connect`](https://docs.rs/alloy/latest/alloy/providers/struct.ProviderBuilder.html#method.connect) method on the [`ProviderBuilder`](https://docs.rs/alloy/latest/alloy/providers/struct.ProviderBuilder.html) will automatically determine the connection type (`Http`, `Ws` or `Ipc`) depending on the format of the URL.
 
+The examples use environment variables for endpoints so credentials are not committed to source
+control. Set `RPC_URL` to an HTTP endpoint or `WS_URL` to a WebSocket endpoint before running them.
+
 ```rust showLineNumbers
 //! Example of setting up a provider using the `.connect` method.
 
 use alloy::providers::{Provider, ProviderBuilder}; // [!code focus]
 use std::error::Error;
 
-const RPC_URL: &str = "https://ethereum.reth.rs/rpc";
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-
-    // Instanties a provider using a string.
-    let provider = ProviderBuilder::new().connect(RPC_URL).await?; // [!code focus]
+    // Instantiate a provider using a caller-supplied endpoint.
+    let rpc_url = std::env::var("RPC_URL")?; // [!code focus]
+    let provider = ProviderBuilder::new().connect(&rpc_url).await?; // [!code focus]
 
     Ok(())
 }

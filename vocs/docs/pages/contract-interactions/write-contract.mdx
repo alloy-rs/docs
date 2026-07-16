@@ -35,13 +35,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // Initialize a signer with a private key.
     let signer: PrivateKeySigner =
         "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80".parse()?;
+    let rpc_url = std::env::var("RPC_URL")?;
 
     // Instantiate a provider with the signer.
     let provider = ProviderBuilder::new() // [!code focus]
         // Signs transactions before dispatching them.
         .wallet(signer) // Signs the transactions // [!code focus]
         // Forking mainnet using anvil to avoid spending real ETH.
-        .connect_anvil_with_config(|a| a.fork("https://ethereum.reth.rs/rpc"));
+        .connect_anvil_with_config(|anvil| anvil.fork(rpc_url));
 
     // Setup WETH contract instance.
     let weth = address!("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2");
