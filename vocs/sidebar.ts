@@ -49,6 +49,7 @@ export const sidebar: Sidebar = [
       { text: 'Legacy Transaction', link: '/transactions/sending-a-legacy-transaction' },
       { text: 'EIP-1559 Transaction', link: '/transactions/sending-an-EIP-1559-transaction' },
       { text: 'EIP-4844 Transaction', link: '/transactions/sending-an-EIP-4844-transaction' },
+      { text: 'EIP-7594 Blob Sidecar', link: '/transactions/sending-an-EIP-7594-transaction' },
       { text: 'EIP-7702 Transaction', link: '/transactions/sending-an-EIP-7702-transaction' },
       { text: 'Using Access Lists', link: '/transactions/using-access-lists' },
     ]
@@ -76,6 +77,7 @@ export const sidebar: Sidebar = [
       text: 'Reference',
       items: [
         { text: 'Feature Flags', link: '/reference/feature-flags' },
+        { text: 'Protocol and RPC Types', link: '/reference/protocol-and-rpc-types' },
       ]
     },
     {
