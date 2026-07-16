@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs'
 import { readFile, writeFile } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -6,10 +7,50 @@ import { versions } from '../vocs/versions'
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const publicDir = join(root, 'vocs/dist/public')
 const pagesDir = join(root, 'vocs/docs/pages')
+const examplesDir = join(root, 'lib/examples')
 const baseUrl = 'https://alloy.rs'
 
+function proseLines(markdown: string, transform: (line: string) => string): string {
+  let inFence = false
+
+  return markdown
+    .split('\n')
+    .map((line) => {
+      if (/^\s*(```|~~~)/.test(line)) {
+        inFence = !inFence
+        return line
+      }
+      return inFence ? line : transform(line)
+    })
+    .join('\n')
+}
+
 function absoluteLinks(markdown: string): string {
-  return markdown.replace(/]\(\/(?!\/)/g, `](${baseUrl}/`)
+  return proseLines(markdown, (line) =>
+    line
+      .replace(/(!?\[[^\]]*]\()\/(?!\/)/g, `$1${baseUrl}/`)
+      .replace(/(\b(?:href|src)\s*=\s*["'])\/(?!\/)/g, `$1${baseUrl}/`),
+  )
+}
+
+function unresolvedLinks(markdown: string): string[] {
+  const unresolved: string[] = []
+  proseLines(markdown, (line) => {
+    const targets = [
+      ...[...line.matchAll(/!?\[[^\]]*]\((<?[^)\s>]+>?)/g)].map((match) => match[1]),
+      ...[...line.matchAll(/\b(?:href|src)\s*=\s*["']([^"']+)["']/g)].map(
+        (match) => match[1],
+      ),
+    ]
+
+    for (const rawTarget of targets) {
+      const target = rawTarget.replace(/^<|>$/g, '')
+      if (/^[a-z][a-z+.-]*:/i.test(target) || target.startsWith('//')) continue
+      unresolved.push(target)
+    }
+    return line
+  })
+  return unresolved
 }
 
 const llmsPath = join(publicDir, 'llms.txt')
@@ -20,13 +61,35 @@ const llmsFull = absoluteLinks(await readFile(llmsFullPath, 'utf8'))
 await writeFile(llmsPath, llms)
 await writeFile(llmsFullPath, llmsFull)
 
-if (/]\(\/(?!\/)/.test(llms) || /]\(\/(?!\/)/.test(llmsFull)) {
-  throw new Error('Agent text still contains root-relative Markdown links')
+const unresolved = [...unresolvedLinks(llms), ...unresolvedLinks(llmsFull)]
+if (unresolved.length) {
+  throw new Error(`Agent text still contains unresolved links: ${[...new Set(unresolved)].join(', ')}`)
 }
 
 const sourceByRoute = new Map<string, string>()
+const exampleSourceByRoute = new Map<string, string>()
 for (const file of new Bun.Glob('**/*.{md,mdx}').scanSync({ cwd: pagesDir, onlyFiles: true })) {
-  sourceByRoute.set(`/${file.replace(/\\/g, '/').replace(/\.(md|mdx)$/, '')}`, file)
+  const pathname = `/${file.replace(/\\/g, '/').replace(/\.(md|mdx)$/, '')}`
+  sourceByRoute.set(pathname, file)
+
+  if (!pathname.startsWith('/examples/') || pathname.endsWith('/README')) continue
+
+  const text = await readFile(join(pagesDir, file), 'utf8')
+  const match = /https:\/\/github\.com\/alloy-rs\/examples\/(?:blob|tree)\/[^/)\s]+\/(examples\/[^)\s]+\.rs)/.exec(text)
+  if (!match) throw new Error(`Generated example page ${pathname} has no source metadata`)
+  if (!existsSync(join(examplesDir, match[1]))) {
+    throw new Error(`Generated example page ${pathname} references missing source ${match[1]}`)
+  }
+
+  exampleSourceByRoute.set(pathname, match[0].replace('/tree/', '/blob/'))
+}
+
+function exampleSourceFor(pathname: string): string | null {
+  if (!pathname.startsWith('/examples/') || pathname.endsWith('/README')) return null
+
+  const source = exampleSourceByRoute.get(pathname)
+  if (!source) throw new Error(`Example page ${pathname} has no verified source URL`)
+  return source
 }
 
 function kindFor(pathname: string): string {
@@ -43,8 +106,6 @@ const pages = [...llms.matchAll(/^- \[([^\]]+)]\((https:\/\/alloy\.rs\/[^)]+)\)(
     const pathname = new URL(url).pathname
     const source = sourceByRoute.get(pathname)
     const parts = pathname.split('/').filter(Boolean)
-    const category = parts[1]
-    const name = parts[2]
 
     return {
       id: pathname,
@@ -56,10 +117,7 @@ const pages = [...llms.matchAll(/^- \[([^\]]+)]\((https:\/\/alloy\.rs\/[^)]+)\)(
       source_url: source
         ? `https://github.com/alloy-rs/docs/blob/main/vocs/docs/pages/${source}`
         : null,
-      example_source_url:
-        parts[0] === 'examples' && category && name && name !== 'README'
-          ? `https://github.com/alloy-rs/examples/blob/main/examples/${category}/examples/${name}.rs`
-          : null,
+      example_source_url: exampleSourceFor(pathname),
     }
   })
   .filter((page, index, all) => all.findIndex((candidate) => candidate.url === page.url) === index)
@@ -89,10 +147,7 @@ for (const [pathname, source] of sourceByRoute) {
     section: parts[0] ?? 'home',
     url: `${baseUrl}${pathname}`,
     source_url: `https://github.com/alloy-rs/docs/blob/main/vocs/docs/pages/${source}`,
-    example_source_url:
-      parts[0] === 'examples' && category && name && name !== 'README'
-        ? `https://github.com/alloy-rs/examples/blob/main/examples/${category}/examples/${name}.rs`
-        : null,
+    example_source_url: exampleSourceFor(pathname),
   })
   indexedPaths.add(pathname)
 }

@@ -65,7 +65,15 @@ function validateTarget(sourceRoute: string, sourceFile: string, rawTarget: stri
   const withoutQuery = withoutHash.split('?', 1)[0]
   let route = sourceRoute
 
+  if (target.startsWith('#')) {
+    errors.push(`${sourceFile}: internal links must be root-relative: ${rawTarget}`)
+  }
+
   if (withoutQuery) {
+    if (!withoutQuery.startsWith('/')) {
+      errors.push(`${sourceFile}: internal links must be root-relative: ${rawTarget}`)
+    }
+
     if (withoutQuery.startsWith('/')) {
       route = withoutQuery.length > 1 ? withoutQuery.replace(/\/$/, '') : '/'
       if (route === '/' || existsSync(join(publicRoot, route.slice(1)))) return
@@ -111,6 +119,9 @@ for (const [route, page] of pages) {
   }
 
   for (const match of page.text.matchAll(/!?\[[^\]]*]\((<?[^)\s>]+>?)/g)) {
+    validateTarget(route, page.file, match[1])
+  }
+  for (const match of page.text.matchAll(/\b(?:href|src)\s*=\s*["']([^"']+)["']/g)) {
     validateTarget(route, page.file, match[1])
   }
 }
