@@ -6,9 +6,11 @@ export const sidebar: Sidebar = [
       text: 'Introduction',
       items: [
         { text: 'Installation', link: '/introduction/installation' },
-        { text: 'Why Alloy', link: '/introduction/why-alloy' },
+        { text: 'Choose a Path', link: '/introduction/choose-a-path' },
+        { text: 'How Alloy Fits Together', link: '/introduction/architecture' },
         { text: 'Getting Started', link: '/introduction/getting-started' },
-        { text: 'Prompting', link: '/introduction/prompting' },
+        { text: 'Why Alloy', link: '/introduction/why-alloy' },
+        { text: 'Agent Guide', link: '/introduction/prompting' },
       ]
     },
     {
@@ -64,10 +66,17 @@ export const sidebar: Sidebar = [
       { text: 'Using big numbers', link: '/using-primitive-types/using-big-numbers' },
       { text: 'Common conversions', link: '/using-primitive-types/common-conversions' },
       { text: 'Comparisons and equivalence', link: '/using-primitive-types/comparisons-and-equivalence' },
-    ]
+      ]
    },
     {
+      text: 'Reference',
+      items: [
+        { text: 'Feature Flags', link: '/reference/feature-flags' },
+      ]
+    },
+    {
       text: 'Examples',
+      collapsed: true,
       items: exampleItems,
     },
     {
