@@ -30,6 +30,7 @@ Alloy supports building a transaction request for all types of transactions via 
 - **EIP-2930 transactions:** Set the `access_list` field. This creates an access-list transaction.
 - **EIP-1559 transactions:** Set the `max_fee_per_gas` and `max_priority_fee_per_gas` fields. Omit the `gas_price` field.
 - **EIP-4844 transaction:** Use the `TransactionBuilder4844` to set blob specific fields using the `.with_blob_sidecar(..)` method.
+- **EIP-7594 sidecar:** Convert the pooled EIP-4844 sidecar to its PeerDAS cell-proof representation. This remains `TxType = 3`.
 - **EIP-7702 transaction:** Use the `TransactionBuilder7702` to set the authorization list using the `.with_authorization_list(..)` method.
 
 ### Legacy Transactions
@@ -75,7 +76,7 @@ Find the full example [here](/transactions/using-access-lists).
 
 ### EIP-1559 Transaction
 
-By default the builder attempts to construct an [EIP1559](https://eips.ethereum.org/EIPS/eip-1559) transaction (`TxType = 2`). You can make this explicit by specifiying the priority gas fields.
+By default the builder attempts to construct an [EIP1559](https://eips.ethereum.org/EIPS/eip-1559) transaction (`TxType = 2`). You can make this explicit by specifying the priority gas fields.
 
 ```rust showLineNumbers
 use alloy::{
@@ -95,7 +96,7 @@ Find the full example [here](/transactions/sending-an-EIP-1559-transaction).
 
 ### EIP-4844 Transaction
 
-EIP-4844 transactions (`TxType = 3`) are specific to Ethereum mainnet. One can build such transactions using the `TransactionBuilder4844` struct. This builder provides methods to set blob specific fields using the `.with_blob_sidecar(..)` method.
+EIP-4844 transactions (`TxType = 3`) are available on networks that have activated blob transactions. Build one using the `TransactionBuilder4844` trait, which provides `.with_blob_sidecar(..)` for blob-specific fields.
 
 ```rust showLineNumbers
 use alloy::{
@@ -113,6 +114,14 @@ let tx = TransactionRequest::default()
 ```
 
 Find the full example [here](/transactions/sending-an-EIP-4844-transaction).
+
+### EIP-7594 Blob Sidecar
+
+EIP-7594 changes the pooled blob sidecar representation for PeerDAS; it does not introduce a new
+transaction type. Build and fill an EIP-4844 transaction, then convert its sidecar before encoding
+and submitting it to a compatible node.
+
+Find the full example [here](/transactions/sending-an-EIP-7594-transaction).
 
 ### Example: EIP-7702 Transaction
 
