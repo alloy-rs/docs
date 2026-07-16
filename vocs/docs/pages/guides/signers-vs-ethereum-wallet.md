@@ -1,60 +1,118 @@
 ---
-description: Manage different signer types within a single EthereumWallet for flexible transaction signing strategies
+title: Signers and EthereumWallet
+description: Choose an Alloy signer, register it with EthereumWallet, and connect it to a provider safely
 ---
 
-# Signers vs Ethereum Wallet
+# Signers and `EthereumWallet`
 
-## Signer
+A signer owns or delegates access to signing material. A network wallet selects a signer for a
+transaction and turns the network's unsigned transaction into a signed envelope. Keeping these
+roles separate lets the same provider work with local keys, hardware devices, or remote KMS
+services.
 
-Signers implement the [`Signer` trait](https://github.com/alloy-rs/alloy/blob/main/crates/signer/src/signer.rs) which enables them to sign hashes, messages and typed data.
+## Signer traits
 
-Alloy provides access to various signers out of the box such as [`PrivateKeySigner`](https://github.com/alloy-rs/alloy/blob/a3d521e18fe335f5762be03656a3470f5f6331d8/crates/signer-local/src/lib.rs#L37), [`AwsSigner`](https://github.com/alloy-rs/alloy/blob/main/crates/signer-aws/src/signer.rs), [`LedgerSigner`](https://github.com/alloy-rs/alloy/blob/main/crates/signer-ledger/src/signer.rs) etc.
+The [`Signer`](https://docs.rs/alloy-signer/latest/alloy_signer/trait.Signer.html) trait signs hashes,
+messages, and EIP-712 typed data. Transaction signing also uses
+[`TxSigner`](https://docs.rs/alloy-network/latest/alloy_network/trait.TxSigner.html), which exposes
+the signer address and signs a network transaction in place.
 
-These signers can directly be passed to a `Provider` using the `ProviderBuilder`. These signers are housed in the [`WalletFiller`](https://github.com/alloy-rs/alloy/blob/main/crates/provider/src/fillers/wallet.rs), which is responsible for signing transactions in the provider stack.
+Most applications do not call the transaction trait directly. They put a signer in an
+`EthereumWallet`, attach that wallet to `ProviderBuilder`, and let the wallet filler sign prepared
+transactions.
 
-For example:
+## Available integrations
+
+| Signer | `alloy` feature | Configuration | Runnable example |
+| --- | --- | --- | --- |
+| Private key | `signer-local` | key string or generated key | [Private key](/examples/wallets/private_key_signer) |
+| Mnemonic | `signer-mnemonic` | phrase, derivation path, optional password | [Mnemonic](/examples/wallets/mnemonic_signer) |
+| Encrypted keystore | `signer-keystore` | keystore file and password | [Create](/examples/wallets/create_keystore), [load](/examples/wallets/keystore_signer) |
+| YubiHSM | `signer-yubihsm` | connector and key ID | [YubiHSM](/examples/wallets/yubi_signer) |
+| AWS KMS | `signer-aws` | AWS credentials, region, key ID | [AWS](/examples/wallets/aws_signer) |
+| GCP KMS | `signer-gcp` | Google credentials and KMS key version | [GCP](/examples/wallets/gcp_signer) |
+| Ledger | `signer-ledger` | device transport, derivation path, chain ID | [Ledger](/examples/wallets/ledger_signer) |
+| Trezor | `signer-trezor` | device transport, derivation path, chain ID | [Trezor](/examples/wallets/trezor_signer) |
+| Turnkey | `signer-turnkey` | Turnkey organization, key, and API credentials | [API docs](https://docs.rs/alloy-signer-turnkey/latest/alloy_signer_turnkey/) |
+
+`signer-local` is part of the default `essentials` set. The other integrations are opt-in. Some
+local capabilities, including mnemonics and keystores, also have their own feature because they add
+dependencies or platform requirements.
+
+## Attach a signer to a provider
+
+Read secrets from a secret manager or environment rather than source code:
 
 ```rust
+use alloy::{
+    network::EthereumWallet,
+    providers::ProviderBuilder,
+    signers::local::PrivateKeySigner,
+};
 
-let signer: PrivateKeySigner = "0x...".parse()?;
+# async fn run() -> Result<(), Box<dyn std::error::Error>> {
+let signer: PrivateKeySigner = std::env::var("PRIVATE_KEY")?.parse()?;
+let signer_address = signer.address();
+let wallet = EthereumWallet::new(signer);
 
-let provider = ProviderBuilder::new()
-    .wallet(signer)
-    .connect_http("http://localhost:8545")?;
-
-```
-
-## `EthereumWallet`
-
-EthereumWallet is a type that can hold multiple different signers such `PrivateKeySigner`, `AwsSigner`, `LedgerSigner` etc and also be passed to the `Provider` using the `ProviderBuilder`.
-
-The signer that instantiates `EthereumWallet` is set as the default signer. This signer is used to sign [`TransactionRequest`] and [`TypedTransaction`] objects that do not specify a signer address in the `from` field.
-
-For example:
-
-```rust
-let ledger_signer = LedgerSigner::new(HDPath::LedgerLive(0), Some(1)).await?;
-let aws_signer = AwsSigner::new(client, key_id, Some(1)).await?;
-let pk_signer: PrivateKeySigner = "0x...".parse()?;
-
-let mut wallet = EthereumWallet::from(pk_signer) // pk_signer will be registered as the default signer.
-    .register_signer(aws_signer)
-    .register_signer(ledger_signer);
-
+let rpc_url = std::env::var("RPC_URL")?;
 let provider = ProviderBuilder::new()
     .wallet(wallet)
-    .connect_http("http://localhost:8545")?;
+    .connect(&rpc_url)
+    .await?;
+# let _ = (provider, signer_address);
+# Ok(())
+# }
 ```
 
-The `PrivateKeySigner` will set to the default signer if the `from` field is not specified. One can hint the `WalletFiller` which signer to use by setting its corresponding address in the `from` field of the `TransactionRequest`.
+`ProviderBuilder::wallet(signer)` also accepts compatible signer types directly and converts them
+to the network wallet. Construct `EthereumWallet` explicitly when registering more than one signer
+or when wallet behavior is part of the application boundary.
 
-If you wish to change the default signer after instantiating `EthereumWallet`, you can do so by using the `register_default_signer` method.
+## Multiple signers
 
-```rust
-// `pk_signer` will be registered as the default signer
-let mut wallet = EthereumWallet::from(pk_signer)
-    .register_signer(ledger_signer);
+`EthereumWallet::new(signer)` registers the first signer as the default. Add others with
+`register_signer`; use `register_default_signer` when changing the default.
 
-// Changes the default signer to `aws_signer`
-wallet.register_default_signer(aws_signer);
-```
+The wallet filler selects a signer as follows:
+
+1. If a transaction has a `from` address, use the signer registered for that address.
+2. Otherwise, use the default signer and populate `from` with its address.
+3. Return an error if the requested address has no registered signer.
+
+See the complete [multi-signer wallet example](/examples/wallets/ethereum_wallet), which combines a
+local key, AWS KMS, and Ledger.
+
+Prefer separate wallets or providers when accounts have different authorization, retry, audit, or
+rate-limit policies. A large shared wallet can hide which external system will be contacted for a
+given transaction.
+
+## Chain ID and transaction intent
+
+Remote and hardware signer constructors may accept a chain ID. The provider's fillers also populate
+and validate transaction fields. Configure the signer and provider for the same chain, and check the
+connected chain ID at startup before allowing writes.
+
+Always review or log safe transaction intent before asking an interactive or remote signer to sign:
+sender, chain ID, destination, value, method selector, gas bounds, and nonce. Never log the private
+key, mnemonic, keystore password, cloud credential, or raw secrets returned by a signing service.
+
+## Message and typed-data signing
+
+Signing a message is not the same as signing a transaction. Use the signer methods directly for
+messages and EIP-712 data, and verify with the matching recovery rules. See [sign and verify
+message](/examples/wallets/sign_message) and [Permit hash signing](/examples/wallets/sign_permit_hash).
+
+Enable the `eip712` feature when the selected signer integration requires typed-data support. Check
+the concrete signer documentation because not every hardware or remote backend supports every
+signing mode.
+
+## Secret-handling checklist
+
+- Keep development keys clearly separated from funded accounts.
+- Use a secret manager or protected environment injection in production.
+- Give cloud KMS identities only the key permissions they need.
+- Pin the expected chain ID and verify it before signing.
+- Apply human or policy approval for high-value operations.
+- Zeroize or drop plaintext secret buffers as soon as practical.
+- Never commit example credentials, even if an account is believed to be empty.
