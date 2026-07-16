@@ -80,6 +80,9 @@ import { HomePage } from "vocs";
 
 # Common Actions
 
+Networked snippets read `RPC_URL` (or `WS_URL` for WebSocket examples) from the environment. This
+keeps credentials out of source control and lets you choose the node provider.
+
 :::code-group
 
 ```rust showLineNumbers [read_contract.rs]
@@ -99,7 +102,8 @@ sol! { // [!code focus]
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     // Initialize the provider.
-    let provider = ProviderBuilder::new().connect("https://ethereum.reth.rs/rpc").await?; // [!code focus]
+    let rpc_url = std::env::var("RPC_URL")?; // [!code focus]
+    let provider = ProviderBuilder::new().connect(&rpc_url).await?; // [!code focus]
 
     // Instantiate the contract instance.
     let weth = address!("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2");
@@ -139,13 +143,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // Initialize a signer with a private key.
     let signer: PrivateKeySigner =
         "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80".parse()?;
+    let rpc_url = std::env::var("RPC_URL")?;
 
     // Instantiate a provider with the signer.
     let provider = ProviderBuilder::new() // [!code focus]
         // Signs transactions before dispatching them.
         .wallet(signer) // [!code focus]
         // Forking mainnet using anvil to avoid spending real ETH.
-        .connect_anvil_with_config(|a| a.fork("https://ethereum.reth.rs/rpc"));
+        .connect_anvil_with_config(|anvil| anvil.fork(rpc_url));
 
     // Setup WETH contract instance.
     let weth = address!("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2");
@@ -375,7 +380,7 @@ Alloy supports the following out of the box for a best-in-class developer experi
 
 Join the Community
 
-- Ask for support in the [Telegram chat](https://t.me/ethers_rs) or create an [issue on Github](https://github.com/alloy-rs/alloy/issues)
+- Report bugs or request features in the [Alloy issue tracker](https://github.com/alloy-rs/alloy/issues)
 - Join the 160+ developers by [contributing](https://github.com/alloy-rs/alloy/blob/main/CONTRIBUTING.md) to Alloy
 
 # Supporters

@@ -12,17 +12,15 @@ expert, we can use your help.
 This guide will help you get started. **Do not let this guide intimidate you**.
 It should be considered a map to help you navigate the process.
 
-The [dev channel][dev] is available for any concerns not covered in this guide,
-please join us!
-
-[dev]: https://t.me/ethers_rs
+For questions not covered here, open a discussion in the
+[Alloy repository](https://github.com/alloy-rs/alloy/discussions).
 
 ## Conduct
 
 The Alloy project adheres to the [Rust Code of Conduct][coc]. This describes
 the _minimum_ behavior expected from all contributors. Instances of violations
 of the Code of Conduct can be reported by contacting the project team at
-[james@prestwich](mailto:james@prestwi.ch).
+[james@prestwi.ch](mailto:james@prestwi.ch).
 
 [coc]: https://www.rust-lang.org/policies/code-of-conduct
 
@@ -98,7 +96,7 @@ specification.
 
 This section lists some commonly needed commands.
 
-First create a [fork](https://github.com/alloy-rs/book/fork).
+First create a [fork](https://github.com/alloy-rs/docs/fork).
 
 Next clone your fork with the `--recurse-submodules` flag:
 
@@ -106,7 +104,12 @@ Next clone your fork with the `--recurse-submodules` flag:
 git clone --recurse-submodules $FORK_URL
 ```
 
-The documentation is built with [`vocs`](https://vocs.dev), you can install `vocs` by using any javascript package manager such as `bun` or `npm`. We prefer `bun`.
+The documentation is built with [`vocs`](https://vocs.dev). Install the pinned
+dependencies with Bun:
+
+```sh
+cd vocs && bun install --frozen-lockfile
+```
 
 To see the book change live run:
 
@@ -116,7 +119,8 @@ cd vocs && bun dev
 
 To perform an update of generated output inspect and run `./scripts/update.sh`.
 
-To add a new section (file) to the book, add it to `./src/SUMMARY.md`.
+To add a new page, create it under `./vocs/docs/pages` and add it to
+`./vocs/sidebar.ts` when it should appear in the primary navigation.
 
 ### Discuss and update
 

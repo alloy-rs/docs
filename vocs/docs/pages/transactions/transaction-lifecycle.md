@@ -37,8 +37,8 @@ let rpc_url = anvil.endpoint().parse()?;
 ```
 
 ```rust
-// Alternatively you can use any valid RPC URL found on https://chainlist.org/
-let rpc_url = "https://ethereum.reth.rs/rpc".parse()?;
+// Alternatively, use a caller-supplied endpoint.
+let rpc_url = std::env::var("RPC_URL")?.parse()?;
 ```
 
 Next let's define a `signer` for Alice. By default `Anvil` defines a mnemonic phrase: `"test test test test test test test test test test test junk"`. Make sure to not use this mnemonic phrase outside of testing environments. We add a signer to the `Provider` using the `.wallet` method which is responsible for signing the transactions.s

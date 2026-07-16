@@ -1,4 +1,5 @@
 ---
+title: Getting Started
 description: Get started with Alloy, the high-performance Rust toolkit for Ethereum and EVM-based blockchains
 ---
 
@@ -109,11 +110,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // Initialize a random signer and get address from it
     let signer = PrivateKeySigner::random(); // [!code focus]
     let from_address = signer.address();
+    let rpc_url = std::env::var("RPC_URL")?;
 
     // Instantiate a provider with the signer
     let provider = ProviderBuilder::new() // [!code focus]
         .wallet(signer) // [!code focus]
-        .connect_anvil_with_config(|a| a.fork("https://ethereum.reth.rs/rpc"));
+        .connect_anvil_with_config(|anvil| anvil.fork(rpc_url));
 
     // Fund the random signer on the local Anvil fork
     provider // [!code focus]
@@ -185,7 +187,7 @@ sol! { // [!code focus]
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Connect to an Ethereum node via WebSocket
-    let ws = WsConnect::new("wss://reth-ethereum.ithaca.xyz/ws"); // [!code focus]
+    let ws = WsConnect::new(std::env::var("WS_URL")?); // [!code focus]
     let provider = ProviderBuilder::new().connect_ws(ws).await?; // [!code focus]
 
     // Uniswap V3 WETH-USDC Pool address
@@ -274,10 +276,7 @@ Alloy is a collection of modular crates that can be used independently.
 Meta-crates can lead to dependencies bloat increasing compile-time. For large projects where compile time can be an issue, we recommend using crates independently as in when required.
 
 ```toml [Cargo.toml]
-[dependencies]
-alloy-primitives = { version = "1.0", default-features = false, features = ["rand", "serde", "map-foldhash"] }
-alloy-provider = { version = "0.15", default-features = false, features = ["ipc"] }
-# ..snip..
+// [!include ~/snippets/installation/individual-crates.toml]
 ```
 
 This allows you to have granular control over the dependencies and features you use in your project.
