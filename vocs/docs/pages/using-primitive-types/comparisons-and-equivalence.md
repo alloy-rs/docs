@@ -1,3 +1,7 @@
+---
+description: Compare Alloy fixed-width integers and reason about equivalent values and representations
+---
+
 ## Comparisons and equivalence
 
 ```rust

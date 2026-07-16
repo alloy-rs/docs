@@ -16,7 +16,7 @@ Alloy is a high-performance Rust toolkit for Ethereum and EVM-based blockchains 
 
 ## Installation
 
-Install alloy to any cargo project using the command line. See [Installation](/introduction/installation#features) for more details on the various features flags.
+Install Alloy in any Cargo project using the command line. See [feature flags](/reference/feature-flags) for task-specific and minimal configurations.
 
 ```bash [cargo]
 cargo add alloy
@@ -281,7 +281,7 @@ Meta-crates can lead to dependencies bloat increasing compile-time. For large pr
 
 This allows you to have granular control over the dependencies and features you use in your project.
 
-Find the full list of the crates [here](/introduction/installation#crates).
+See [how Alloy fits together](/introduction/architecture) for the crate and runtime layers.
 
 ### `no_std` crates
 

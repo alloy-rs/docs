@@ -4,6 +4,10 @@ Documentation for all things Alloy.
 
 View the docs [here](https://alloy.rs/).
 
+Machine-readable discovery is available through
+[`agent-index.json`](https://alloy.rs/agent-index.json), [`llms.txt`](https://alloy.rs/llms.txt), and
+[`llms-full.txt`](https://alloy.rs/llms-full.txt).
+
 ## Contributing
 
 Thanks for your help improving the project! We are so happy to have you! We have

@@ -41,9 +41,11 @@ impl Network for Ethereum {
 Choosing the wrong network type can lead to unexpected deserialization errors due to differences in RPC types. For example, the using an `Ethereum` network provider to get a full block with transactions can result in the following error:
 
 ```rust [base_block.rs]
+let rpc_url = std::env::var("RPC_URL")?;
 let provider = ProviderBuilder::new()
         .network::<Ethereum>()
-        .connect_http("https://base-sepolia.ithaca.xyz/".parse()?);
+        .connect(&rpc_url)
+        .await?;
 
 // Yields: Error: deserialization error: data did not match any variant of untagged enum BlockTransactions // [!code hl]
 let block_with_txs = provider.get_block(25508329.into()).full().await?;

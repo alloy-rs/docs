@@ -1,3 +1,7 @@
+---
+description: Create, parse, hash, and inspect Alloy byte strings and Ethereum addresses
+---
+
 ## Basic hash and address types
 
 ### Bytes and Address
