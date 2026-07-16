@@ -17,7 +17,7 @@ then to runnable code where one exists.
 | Choose a signer or wallet | [Signers vs. Ethereum wallet](/guides/signers-vs-ethereum-wallet) | [Wallets and signers](/examples/wallets/README) |
 | Work with more than one chain or custom network types | [Interacting with multiple networks](/guides/interacting-with-multiple-networks) | [Any network](/examples/advanced/any_network) |
 | Add retries, rate limits, fallbacks, or observability | [Transport layers](/guides/layers) | [Layers](/examples/layers/README) |
-| Run against Anvil, Geth, or Reth locally | [How Alloy fits together](/introduction/architecture#local-nodes-and-tests) | [Node bindings](/examples/node-bindings/README) |
+| Test with mocks, Anvil, Geth, Reth, or a fork | [Testing Alloy applications](/guides/testing) | [Mock provider](/examples/providers/mocking) and [node bindings](/examples/node-bindings/README) |
 | Decode ABI data, logs, or transaction input | [Using `sol!`](/contract-interactions/using-sol!) | [`sol!` examples](/examples/sol-macro/README) and [transaction decoding](/examples/transactions/decode_input) |
 | Select a smaller dependency set | [Feature flags](/reference/feature-flags) | [Alloy features on docs.rs](https://docs.rs/crate/alloy/latest/features) |
 | Migrate from ethers-rs | [Migration reference](/migrating-from-ethers/reference) | [Conversions](/migrating-from-ethers/conversions) |
