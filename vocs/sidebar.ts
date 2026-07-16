@@ -33,6 +33,9 @@ export const sidebar: Sidebar = [
       { text: 'HTTP provider', link: '/rpc-providers/http-provider' },
       { text: 'WS provider', link: '/rpc-providers/ws-provider' },
       { text: 'IPC provider', link: '/rpc-providers/ipc-provider' },
+      { text: 'Subscriptions and Polling', link: '/rpc-providers/subscriptions-and-polling' },
+      { text: 'Reliability and Retries', link: '/rpc-providers/reliability' },
+      { text: 'RPC Namespaces', link: '/rpc-providers/rpc-namespaces' },
       { text: 'Understanding Fillers', link: '/rpc-providers/understanding-fillers'}
     ]
    },
