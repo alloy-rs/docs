@@ -19,8 +19,17 @@ jobs:
           submodules: recursive
       - uses: oven-sh/setup-bun@v2
 
+      - name: Check documented dependency versions
+        run: bun scripts/check-versions.ts
+
       - name: Build Vocs
-        run: cd vocs && bun install && bun run build
+        run: cd vocs && bun install --frozen-lockfile && bun run build
+
+      - name: Check generated discovery files
+        run: |
+          test -f vocs/dist/public/sitemap.xml
+          test -f vocs/dist/public/robots.txt
+          test ! -d vocs/dist/public/templates
 
       # Only prepare for deploy if a push to main
       - name: Setup Pages

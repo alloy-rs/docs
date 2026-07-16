@@ -1,4 +1,5 @@
 ---
+title: Getting Started
 description: Get started with Alloy, the high-performance Rust toolkit for Ethereum and EVM-based blockchains
 ---
 
@@ -274,10 +275,7 @@ Alloy is a collection of modular crates that can be used independently.
 Meta-crates can lead to dependencies bloat increasing compile-time. For large projects where compile time can be an issue, we recommend using crates independently as in when required.
 
 ```toml [Cargo.toml]
-[dependencies]
-alloy-primitives = { version = "1.0", default-features = false, features = ["rand", "serde", "map-foldhash"] }
-alloy-provider = { version = "0.15", default-features = false, features = ["ipc"] }
-# ..snip..
+// [!include ~/snippets/installation/individual-crates.toml]
 ```
 
 This allows you to have granular control over the dependencies and features you use in your project.

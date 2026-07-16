@@ -20,7 +20,7 @@ SNIPPETS_PATH="./vocs/docs/snippets"
 # MDX Snippets path
 MDX_SNIPPETS_PATH="./vocs/docs/pages/examples"
 # Templates path
-MDX_TEMPLATES_PATH="./vocs/docs/pages/templates"
+MDX_TEMPLATES_PATH="./vocs/docs/templates"
 # Sidebar items TS file
 SIDEBAR_ITEMS_PATH="./vocs/example-items.ts"
 
@@ -32,7 +32,7 @@ SIDEBAR_ITEMS_PATH="./vocs/example-items.ts"
 # the example code and instructions on how to run the example.
 # 3. Print any differences between the current and updated example files list.
 function main () {
-  log $GREEN "Updating..."
+  log "$GREEN" "Updating..."
 
   # Change directory to project root
   SCRIPT_PATH="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
@@ -45,16 +45,16 @@ function main () {
   git submodule foreach git pull origin main
 
   # Create the $SNIPPETS_PATH directory if it doesn't exist
-  mkdir -p $SNIPPETS_PATH
+  mkdir -p "$SNIPPETS_PATH"
 
   # Create the $MDX_SNIPPETS_PATH directory if it doesn't exist
-  mkdir -p $MDX_SNIPPETS_PATH
+  mkdir -p "$MDX_SNIPPETS_PATH"
 
   # Copy the directory and files from `lib/examples/examples` to $SNIPPETS_PATH
   echo "Copying examples to $SNIPPETS_PATH"
-  cp -r ./lib/examples/examples/* $SNIPPETS_PATH/
+  cp -r ./lib/examples/examples/* "$SNIPPETS_PATH/"
   
-  log $GREEN "Copied examples to $SNIPPETS_PATH"
+  log "$GREEN" "Copied examples to $SNIPPETS_PATH"
 
   # Get the commit hash of the latest commit in the examples repository
   EXAMPLES_COMMIT_HASH=$(git -C ./lib/examples rev-parse HEAD)
@@ -64,30 +64,30 @@ function main () {
 
   # Clean up existing examples
   echo "Cleaning up existing examples"
-  rm -rf $MDX_SNIPPETS_PATH/*
+  rm -rf "${MDX_SNIPPETS_PATH:?}/"*
 
   # Create the $MDX_SNIPPETS_PATH directory if it doesn't exist
-  mkdir -p $MDX_SNIPPETS_PATH
+  mkdir -p "$MDX_SNIPPETS_PATH"
 
   # Create example markdown files
   for CODE_DIRPATH in ./lib/examples/examples/*/; do
     # Get the example category directory name
-    EXAMPLE_DIRNAME=$(basename $CODE_DIRPATH)
+    EXAMPLE_DIRNAME=$(basename "$CODE_DIRPATH")
 
     # Populate the $MDX_SNIPPETS_PATH directory with the example category directory
-    mkdir -p $MDX_SNIPPETS_PATH/$EXAMPLE_DIRNAME
+    mkdir -p "$MDX_SNIPPETS_PATH/$EXAMPLE_DIRNAME"
 
     # Populate the $MDX_TEMPLATES_PATH directory with the example category directory if it doesn't exist
-    mkdir -p $MDX_TEMPLATES_PATH/$EXAMPLE_DIRNAME
-    touch $MDX_TEMPLATES_PATH/$EXAMPLE_DIRNAME/README.mdx
-    cp $MDX_TEMPLATES_PATH/$EXAMPLE_DIRNAME/README.mdx $MDX_SNIPPETS_PATH/$EXAMPLE_DIRNAME/README.mdx
+    mkdir -p "$MDX_TEMPLATES_PATH/$EXAMPLE_DIRNAME"
+    touch "$MDX_TEMPLATES_PATH/$EXAMPLE_DIRNAME/README.mdx"
+    cp "$MDX_TEMPLATES_PATH/$EXAMPLE_DIRNAME/README.mdx" "$MDX_SNIPPETS_PATH/$EXAMPLE_DIRNAME/README.mdx"
 
     # For every example file in the examples directory
     # - Create a markdown file in the $MDX_SNIPPETS_PATH directory
     # - Insert the example code by reference in the markdown file
     # - Include the template content by pointer if it exists
-    for EXAMPLE_FILEPATH in $CODE_DIRPATH/examples/*.rs; do
-      EXAMPLE_FILENAME=$(basename $EXAMPLE_FILEPATH .rs)
+    for EXAMPLE_FILEPATH in "$CODE_DIRPATH"examples/*.rs; do
+      EXAMPLE_FILENAME=$(basename "$EXAMPLE_FILEPATH" .rs)
       MDX_TEMPLATE_FILEPATH="$MDX_TEMPLATES_PATH/$EXAMPLE_DIRNAME/README.mdx"
       EXAMPLE_README_MDX=$MDX_SNIPPETS_PATH/$EXAMPLE_DIRNAME/README.mdx
       MDX_SNIPPET=$MDX_SNIPPETS_PATH/$EXAMPLE_DIRNAME/$EXAMPLE_FILENAME.mdx
@@ -95,9 +95,9 @@ function main () {
       
       # Include the template content pointer if the template exists
       TEMPLATE_CONTENT=$(
-        [ -f $MDX_TEMPLATE_FILEPATH ] && \
+        [ -f "$MDX_TEMPLATE_FILEPATH" ] && \
         printf "%s\n\n%s\n" \
-          "import Template from '../../templates/$EXAMPLE_DIRNAME/README.mdx'" \
+          "import Template from '../../../templates/$EXAMPLE_DIRNAME/README.mdx'" \
           "<Template />" || \
         echo ""
       )
@@ -124,7 +124,7 @@ To run this example:
 - Run: \`cargo run --example $EXAMPLE_FILENAME\`
 
 \`\`\`rust
-// [!include ~/snippets/$EXAMPLE_DIRNAME/examples/$(basename $EXAMPLE_FILEPATH)]
+// [!include ~/snippets/$EXAMPLE_DIRNAME/examples/$(basename "$EXAMPLE_FILEPATH")]
 \`\`\`
 
 Find the source code on Github [here](https://github.com/alloy-rs/examples/tree/$EXAMPLES_COMMIT_HASH/examples/$EXAMPLE_DIRNAME/examples/$EXAMPLE_FILENAME.rs).
@@ -190,9 +190,9 @@ EOF
   UPDATED_EXAMPLE_FILES=$(find $SNIPPETS_PATH -type f)
   diff <(echo "$CURRENT_EXAMPLE_FILES") <(echo "$UPDATED_EXAMPLE_FILES") || true
 
-  log $YELLOW "Update \`./vocs/docs/pages/templates/*/README.md\` if necessary!"
+  log "$YELLOW" "Update \`./vocs/docs/templates/*/README.mdx\` if necessary!"
 
-  log $GREEN "Done"
+  log "$GREEN" "Done"
 }
 
 # Run the main function

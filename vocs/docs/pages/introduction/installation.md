@@ -1,4 +1,5 @@
 ---
+title: Installation
 description: Install Alloy with cargo and configure the necessary feature flags for your blockchain development needs
 ---
 
@@ -15,7 +16,7 @@ cargo add alloy
 Alternatively, you can add the following to your `Cargo.toml` file:
 
 ```toml
-alloy = "1.0"
+// [!include ~/snippets/installation/alloy.toml]
 ```
 
 For a more fine-grained control over the features you wish to include, you can add the individual crates to your `Cargo.toml` file, or use the `alloy` crate with the features you need.
