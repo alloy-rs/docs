@@ -10,7 +10,7 @@ A [`Provider`](https://docs.rs/alloy/latest/alloy/providers/trait.Provider.html)
 
 The correct way of creating a [`Provider`](https://docs.rs/alloy/latest/alloy/providers/trait.Provider.html) is through the [`ProviderBuilder`](https://docs.rs/alloy/latest/alloy/providers/struct.ProviderBuilder.html), a [builder](https://rust-unofficial.github.io/patterns/patterns/creational/builder.html).
 
-Alloy provides concrete transport implementations for [`HTTP`](/rpc-providers/http-provider), [`WS` (WebSockets)](/rpc-providers/ws-provider) and [`IPC` (Inter-Process Communication)](/rpc-providers/ipc-provider.md), as well as higher level transports which wrap a single or multiple transports.
+Alloy provides concrete transport implementations for [`HTTP`](/rpc-providers/http-provider), [`WS` (WebSockets)](/rpc-providers/ws-provider) and [`IPC` (Inter-Process Communication)](/rpc-providers/ipc-provider), as well as higher level transports which wrap a single or multiple transports.
 
 The [`connect`](https://docs.rs/alloy/latest/alloy/providers/struct.ProviderBuilder.html#method.connect) method on the [`ProviderBuilder`](https://docs.rs/alloy/latest/alloy/providers/struct.ProviderBuilder.html) will automatically determine the connection type (`Http`, `Ws` or `Ipc`) depending on the format of the URL.
 

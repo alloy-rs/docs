@@ -9,13 +9,17 @@ Alloy publishes machine-readable documentation for coding agents. Give an agent 
 
 ## Recommended retrieval order
 
-1. Start with [`llms.txt`](https://alloy.rs/llms.txt) to discover the canonical page for the task.
-2. Load the relevant guide and any pages it links to.
-3. Find the closest runnable example in the [Alloy examples repository](https://github.com/alloy-rs/examples).
+1. Query [`agent-index.json`](https://alloy.rs/agent-index.json) when the client can read JSON. It
+   maps task vocabulary, features, environment variables, guides, and examples.
+2. Otherwise start with [`llms.txt`](https://alloy.rs/llms.txt) to discover the canonical page.
+3. Load the smallest relevant guide and the runnable examples it links to.
 4. Use [docs.rs](https://docs.rs/alloy/latest/alloy/) for exact types, traits, methods, and feature gates.
 5. Use [`llms-full.txt`](https://alloy.rs/llms-full.txt) only when the agent cannot retrieve pages individually.
 
 The Alloy version displayed in this site's navigation is the version targeted by hand-written documentation. Generated example pages identify the exact examples commit they were copied from.
+
+All URLs in the published agent inventories are absolute. Cache them with the documented Alloy
+version and invalidate the cache when that version changes.
 
 ## Starter prompt
 

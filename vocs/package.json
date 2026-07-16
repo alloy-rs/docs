@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vocs dev",
-    "build": "vocs build",
+    "build": "vocs build && bun ../scripts/build-agent-index.ts",
     "preview": "vocs preview"
   },
   "dependencies": {

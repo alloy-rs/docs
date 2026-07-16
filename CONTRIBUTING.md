@@ -122,6 +122,10 @@ To perform an update of generated output inspect and run `./scripts/update.sh`.
 To add a new page, create it under `./vocs/docs/pages` and add it to
 `./vocs/sidebar.ts` when it should appear in the primary navigation.
 
+Every hand-written page must have a frontmatter description. Use root-relative internal links and
+run `bun scripts/check-docs.ts` from the repository root before building. The build generates the
+agent inventories, so new task areas should also be represented in `scripts/build-agent-index.ts`.
+
 ### Discuss and update
 
 You will probably get feedback or requests for changes to your Pull Request.

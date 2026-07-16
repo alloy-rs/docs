@@ -1,3 +1,7 @@
+---
+description: Initialize Alloy U256 and other fixed-width integer values from common Rust representations
+---
+
 ## Initializing Big Numbers
 
 ```rust

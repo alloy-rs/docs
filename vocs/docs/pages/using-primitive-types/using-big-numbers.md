@@ -1,3 +1,7 @@
+---
+description: Perform arithmetic and convert human-readable units with Alloy fixed-width integers
+---
+
 ## Using big numbers
 
 Ethereum uses big numbers (also known as "bignums" or "arbitrary-precision integers") to represent certain values in its codebase and in blockchain transactions. This is necessary because the [EVM](https://ethereum.org/en/developers/docs/evm) operates on a 256-bit word size, which is different from the usual 32-bit or 64-bit of modern machines. This was chosen for the ease of use with 256-bit cryptography (such as [Keccak-256](https://github.com/ethereum/eth-hash) hashes or [secp256k1](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm) signatures).
