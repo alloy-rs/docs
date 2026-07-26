@@ -204,6 +204,21 @@ const topics = [
     configuration: ['RPC_URL', 'PRIVATE_KEY'],
   },
   {
+    id: 'transaction-encoding',
+    intent: 'Encode, decode, hash, and recover EIP-2718 transaction or receipt envelopes',
+    keywords: [
+      'EIP-2718', 'TxEnvelope', 'ReceiptEnvelope', 'encode', 'decode', 'RLP', 'tx_hash',
+      'recover_signer',
+    ],
+    docs: [url('/transactions/encoding-and-decoding'), url('/reference/protocol-and-rpc-types')],
+    examples: [
+      url('/examples/transactions/encode_decode_transaction_envelopes'),
+      url('/examples/transactions/encode_decode_receipt_envelopes'),
+    ],
+    features: ['consensus', 'eips', 'k256'],
+    configuration: [],
+  },
+  {
     id: 'blob-transactions',
     intent: 'Build EIP-4844 blobs or EIP-7594 PeerDAS sidecars',
     keywords: ['blob', 'EIP-4844', 'EIP-7594', 'PeerDAS', 'KZG', 'sidecar'],

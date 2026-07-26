@@ -114,7 +114,8 @@ export const exampleItems: SidebarItem[] = [
     { text: 'Transactions', collapsed: true, link: '/examples/transactions/README', items: [
         { text: 'Decode input', link: '/examples/transactions/decode_input' },
         { text: 'Decode a receipt log', link: '/examples/transactions/decode_receipt_log' },
-        { text: 'Encode and decode EIP-1559 transaction', link: '/examples/transactions/encode_decode_eip1559' },
+        { text: 'Encode and decode receipt envelopes', link: '/examples/transactions/encode_decode_receipt_envelopes' },
+        { text: 'Encode and decode transaction envelopes', link: '/examples/transactions/encode_decode_transaction_envelopes' },
         { text: 'Get gas price in USD', link: '/examples/transactions/gas_price_usd' },
         { text: 'Simulate using `debug_traceCallMany`', link: '/examples/transactions/debug_trace_call_many' },
         { text: 'Simulate using `trace_callMany`', link: '/examples/transactions/trace_call_many' },

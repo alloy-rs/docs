@@ -45,6 +45,7 @@ export const sidebar: Sidebar = [
     items: [
       { text: 'Introduction', link: '/transactions/introduction' },
       { text: 'Transaction Lifecycle', link: '/transactions/transaction-lifecycle' },
+      { text: 'Encoding and Decoding', link: '/transactions/encoding-and-decoding' },
       { text: 'Using the Transaction Builder', link: '/transactions/using-the-transaction-builder' },
       { text: 'Legacy Transaction', link: '/transactions/sending-a-legacy-transaction' },
       { text: 'EIP-1559 Transaction', link: '/transactions/sending-an-EIP-1559-transaction' },
