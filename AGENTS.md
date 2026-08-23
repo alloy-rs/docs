@@ -38,7 +38,8 @@ Markdown is not proof that a snippet compiles.
 
 ## Agent retrieval artifacts
 
-- `https://alloy.rs/agent-index.json`: versioned page inventory and task-to-page map.
+- `https://alloy.rs/agent-index.json`: versioned page inventory and task-to-page map with a direct
+  `markdown_url` when Vocs generates page-level Markdown.
 - `https://alloy.rs/llms.txt`: compact page inventory.
 - `https://alloy.rs/llms-full.txt`: complete corpus; use only when page retrieval is unavailable.
 - `https://github.com/alloy-rs/examples/blob/main/examples-index.json`: runnable example metadata once

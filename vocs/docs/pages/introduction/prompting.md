@@ -12,7 +12,8 @@ Alloy publishes machine-readable documentation for coding agents. Give an agent 
 1. Query [`agent-index.json`](https://alloy.rs/agent-index.json) when the client can read JSON. It
    maps task vocabulary, features, environment variables, guides, and examples.
 2. Otherwise start with [`llms.txt`](https://alloy.rs/llms.txt) to discover the canonical page.
-3. Load the smallest relevant guide and the runnable examples it links to.
+3. Load the smallest relevant page through its `markdown_url` field when present. Fall back to its
+   HTML `url`, then follow the runnable examples it links to.
 4. Use [docs.rs](https://docs.rs/alloy/latest/alloy/) for exact types, traits, methods, and feature gates.
 5. Use [`llms-full.txt`](https://alloy.rs/llms-full.txt) only when the agent cannot retrieve pages individually.
 

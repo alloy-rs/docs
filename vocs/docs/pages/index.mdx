@@ -8,6 +8,30 @@ showLogo: false
 ---
 
 import { HomePage } from "vocs";
+
+<script type="application/ld+json">
+  {JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "Alloy",
+    applicationCategory: "DeveloperApplication",
+    operatingSystem: "Cross-platform",
+    description: "A high-performance Rust toolkit for Ethereum and EVM-compatible chains.",
+    url: "https://alloy.rs/",
+    codeRepository: "https://github.com/alloy-rs/alloy",
+    programmingLanguage: "Rust",
+    sameAs: [
+      "https://crates.io/crates/alloy",
+      "https://docs.rs/alloy/latest/alloy/",
+      "https://github.com/alloy-rs/alloy",
+    ],
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+  })}
+</script>
  
 <div className="max-w-[1120px] mx-auto vp-doc relative px-[24px] mb-[64px] mt-[32px] md:px-0 md:mb-[32px]">
   <div className="pt-[48px] max-sm:pt-0">
@@ -15,7 +39,7 @@ import { HomePage } from "vocs";
       <div className="space-y-8 max-w-[400px] flex flex-col items-start max-md:items-center">
         <div className="space-x-4 flex flex-row">
           <HomePage.Logo />
-          <div className="font-semibold text-[72px] text-[#000000] max-sm:text-[54px] max-md:text-center dark:text-white">alloy</div>
+          <h1 className="font-semibold text-[72px] text-[#000000] max-sm:text-[54px] max-md:text-center dark:text-white">alloy</h1>
         </div>
         <div className="font-regular text-[21px] max-sm:text-[18px] text-[#919193] max-md:text-center">Connect applications to blockchains using <span className="text-black dark:text-white">performant</span>, <span className="text-black dark:text-white">intuitive</span>, and <span className="text-black dark:text-white">battle-tested</span> APIs.</div>
         <div className="flex justify-center space-x-2">
