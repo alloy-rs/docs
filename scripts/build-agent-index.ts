@@ -96,6 +96,14 @@ function exampleSourceFor(pathname: string): string | null {
   return source
 }
 
+function markdownUrlFor(source: string | undefined): string | null {
+  if (!source) return null
+
+  const markdownPath = source.replace(/\.(md|mdx)$/, '.md')
+  if (!existsSync(join(publicDir, 'assets/md', markdownPath))) return null
+  return `${baseUrl}/assets/md/${markdownPath}`
+}
+
 function kindFor(pathname: string): string {
   if (pathname.startsWith('/examples/')) return 'example'
   if (pathname.startsWith('/migrating-')) return 'migration'
@@ -118,6 +126,7 @@ const pages = [...llms.matchAll(/^- \[([^\]]+)]\((https:\/\/alloy\.rs\/[^)]+)\)(
       kind: kindFor(pathname),
       section: parts[0] ?? 'home',
       url,
+      markdown_url: markdownUrlFor(source),
       source_url: source
         ? `https://github.com/alloy-rs/docs/blob/main/vocs/docs/pages/${source}`
         : null,
@@ -150,6 +159,7 @@ for (const [pathname, source] of sourceByRoute) {
     kind: kindFor(pathname),
     section: parts[0] ?? 'home',
     url: `${baseUrl}${pathname}`,
+    markdown_url: markdownUrlFor(source),
     source_url: `https://github.com/alloy-rs/docs/blob/main/vocs/docs/pages/${source}`,
     example_source_url: exampleSourceFor(pathname),
   })
@@ -316,7 +326,7 @@ const index = {
   retrieval_order: [
     `${baseUrl}/agent-index.json`,
     `${baseUrl}/llms.txt`,
-    'the smallest relevant page and linked runnable examples',
+    `the smallest relevant page's markdown_url when present, otherwise its url, and linked runnable examples`,
     'https://docs.rs/alloy/latest/alloy/ for exact symbols and feature gates',
     `${baseUrl}/llms-full.txt only when individual page retrieval is unavailable`,
   ],
