@@ -1,0 +1,93 @@
+name: update Alloy version
+
+on:
+  schedule:
+    - cron: '23 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: update-alloy-version
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Find latest Alloy release
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="$(gh api repos/alloy-rs/alloy/releases/latest --jq .tag_name)"
+          latest="${tag#v}"
+          current="$(bun -e "import { versions } from './vocs/versions'; console.log(versions.alloy)")"
+
+          if [[ ! "$latest" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "Unexpected release tag: $tag" >&2
+            exit 1
+          fi
+
+          echo "latest=$latest" >> "$GITHUB_OUTPUT"
+          if [[ "$latest" == "$current" ]]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Documentation already targets Alloy $latest."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Updating documented Alloy version from $current to $latest."
+          fi
+
+      - name: Update documented version
+        if: steps.release.outputs.changed == 'true'
+        run: bun scripts/check-versions.ts --update "${{ steps.release.outputs.latest }}"
+
+      - name: Check documented dependency versions
+        if: steps.release.outputs.changed == 'true'
+        run: bun scripts/check-versions.ts
+
+      - name: Check documentation structure and links
+        if: steps.release.outputs.changed == 'true'
+        run: bun scripts/check-docs.ts
+
+      - name: Build Vocs
+        if: steps.release.outputs.changed == 'true'
+        run: cd vocs && bun install --frozen-lockfile && bun run build
+
+      - name: Create or update pull request
+        if: steps.release.outputs.changed == 'true'
+        id: pull_request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: automation/update-alloy-version
+          delete-branch: true
+          commit-message: "docs: update Alloy version to ${{ steps.release.outputs.latest }}"
+          title: "docs: update Alloy version to ${{ steps.release.outputs.latest }}"
+          body: |
+            ## Summary
+
+            - update the centralized documented Alloy version to ${{ steps.release.outputs.latest }}
+            - refresh all generated installation dependency snippets to match
+
+            ## Why
+
+            Alloy ${{ steps.release.outputs.latest }} is the latest published release.
+
+            ## Impact
+
+            The version selector, installation guidance, and agent discovery metadata will consistently advertise Alloy ${{ steps.release.outputs.latest }}.
+
+      - name: Run pull request checks
+        if: steps.pull_request.outputs.pull-request-operation == 'created' || steps.pull_request.outputs.pull-request-operation == 'updated'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run book.yml --ref automation/update-alloy-version
