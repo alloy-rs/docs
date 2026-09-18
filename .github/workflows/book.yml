@@ -34,6 +34,13 @@ jobs:
       - name: Build Vocs
         run: cd vocs && bun install --frozen-lockfile && bun run build
 
+      - name: Show package firewall decisions on failure
+        if: failure()
+        run: |
+          if sudo test -f /var/log/aegis/service.jsonl; then
+            sudo tail -n 100 /var/log/aegis/service.jsonl
+          fi
+
       - name: Check generated discovery files
         run: |
           test -f vocs/dist/public/sitemap.xml
