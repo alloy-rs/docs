@@ -18,7 +18,14 @@ jobs:
   update:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      actions: write
+      contents: write
+      pull-requests: write
+      id-token: write
     steps:
+      - name: Secure runner
+        uses: tempoxyz/gh-actions/actions/secure-runner@ca2b15de1d1f6edd2276736187d7e4c2d898972c
       - uses: actions/checkout@v4
         with:
           submodules: recursive
