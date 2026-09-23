@@ -24,9 +24,18 @@ cargo add alloy
 
 ## Quick Start
 
+The default features cover the first example, which connects to an Anvil node you start yourself.
+The second example starts and controls Anvil from Rust, which requires the `node-bindings` feature
+and the [`anvil`](https://getfoundry.sh) binary on your `PATH`. The third example subscribes over
+WebSocket, which requires `provider-ws`. Enable both to run every example on this page:
+
+```bash [cargo]
+cargo add alloy --features node-bindings,provider-ws
+```
+
 ### 1. Sending Transactions
 
-This example shows how to send 100 ETH using the [`TransactionBuilder`](/transactions/using-the-transaction-builder) on a local anvil node
+This example shows how to send 100 ETH using the [`TransactionBuilder`](/transactions/using-the-transaction-builder) on a local anvil node. Start the node with `anvil` in a separate terminal before running it:
 
 ```rust
 use alloy::{
@@ -80,7 +89,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
 ### 2. Interacting with Smart Contracts
 
-Alloy's `sol!` macro makes working with smart contracts intuitive by letting you write Solidity directly in Rust:
+Alloy's `sol!` macro makes working with smart contracts intuitive by letting you write Solidity directly in Rust.
+This example forks mainnet into a local Anvil instance with `connect_anvil_with_config` and funds the signer through the `AnvilApi` extension trait, both of which need the `node-bindings` feature. Set `RPC_URL` to a mainnet RPC endpoint before running it:
 
 ```rust
 use alloy::{
@@ -165,7 +175,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
 ### 3. Monitoring Blockchain Activity
 
-This example shows how to monitor blocks and track the [WETH](https://etherscan.io/token/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2) balance of a [Uniswap V3 WETH-USDC](https://etherscan.io/address/0x8ad599c3A0ff1De082011EFDDc58f1908eb6e6D8) contract in real-time:
+This example shows how to monitor blocks and track the [WETH](https://etherscan.io/token/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2) balance of a [Uniswap V3 WETH-USDC](https://etherscan.io/address/0x8ad599c3A0ff1De082011EFDDc58f1908eb6e6D8) contract in real-time.
+It needs the `provider-ws` feature, the `futures-util` crate for `StreamExt`, and `WS_URL` set to a WebSocket endpoint:
 
 :::code-group
 

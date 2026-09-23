@@ -36,6 +36,15 @@ use alloy::{
 };
 ```
 
+The `node_bindings` module, together with the `ProviderBuilder::connect_anvil*` helpers, is only
+available with the `node-bindings` feature, which the default feature set does not enable. Add it
+when you want to start Anvil, Geth, or Reth from Rust, for example to run the
+[getting started](/introduction/getting-started) examples:
+
+```sh
+cargo add alloy --features node-bindings
+```
+
 ### Next steps
 
 - [Choose a task-oriented path](/introduction/choose-a-path).

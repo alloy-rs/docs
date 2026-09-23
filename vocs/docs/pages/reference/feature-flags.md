@@ -58,8 +58,8 @@ requirements are additive, so compile every intended target after changing them.
 | Mnemonics or keystores | `signer-mnemonic`, `signer-keystore` | Add to `signer-local` behavior |
 | AWS KMS, GCP KMS, or Turnkey | `signer-aws`, `signer-gcp`, `signer-turnkey` | Each integration is independent |
 | Ledger or Trezor | `signer-ledger`, `signer-trezor` | Ledger also has browser and Node variants |
-| Anvil process helpers | `provider-anvil-node` | Includes provider Anvil RPC and node bindings; not in `full` |
-| Standalone node bindings | `node-bindings` | Re-exports process bindings without provider helpers |
+| Start Anvil, Geth, or Reth from Rust | `node-bindings` | Enables the process bindings, `ProviderBuilder::connect_anvil*`, and the `AnvilApi` trait; not in `full` |
+| Anvil helpers plus Anvil RPC types | `provider-anvil-node` | `node-bindings` plus `provider-anvil-api`, which adds the `anvil` RPC types |
 | `debug_*` RPC methods | `provider-debug-api` | Also enables debug and trace RPC types |
 | `trace_*` RPC methods | `provider-trace-api` | Enables trace RPC types |
 | `txpool_*` RPC methods | `provider-txpool-api` | Enables txpool RPC types |
