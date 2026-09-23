@@ -105,7 +105,13 @@ import { HomePage } from "vocs";
 # Common Actions
 
 Networked snippets read `RPC_URL` (or `WS_URL` for WebSocket examples) from the environment. This
-keeps credentials out of source control and lets you choose the node provider.
+keeps credentials out of source control and lets you choose the node provider. Snippets that start
+Anvil from Rust, such as the mainnet fork in `write_contract.rs`, need the `node-bindings` feature
+in addition to the defaults:
+
+```bash
+cargo add alloy --features node-bindings
+```
 
 :::code-group
 
