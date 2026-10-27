@@ -119,7 +119,7 @@ impl Service<String> for MyService {
 
 Running this example outputs _"Hello Alice!"_ after a 5-second delay.
 
-Layers might sound similar to the fillers, but there's a crucial difference. Fillers can be used to modify the `TransactionRequest` object before it is submitted. Layers work within the `Request/Response` scope, allowing us to customize logic before and after sending the RPC request. If you're familiar with the Alloy predecessor Ethers.rs, you've probably noticed that it used [middleware](https://www.gakonst.com/ethers-rs/middleware/middleware.html) to achieve the same result.
+Layers might sound similar to the fillers, but there's a crucial difference. Fillers can be used to modify the `TransactionRequest` object before it is submitted. Layers work within the `Request/Response` scope, allowing us to customize logic before and after sending the RPC request. If you're familiar with the Alloy predecessor Ethers.rs, you've probably noticed that it used [middleware](https://github.com/gakonst/ethers-rs/tree/master/ethers-middleware) to achieve the same result.
 
 ## How to use layers in Alloy
 

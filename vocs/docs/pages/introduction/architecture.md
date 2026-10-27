@@ -37,7 +37,7 @@ Feature flags decide which re-exports and implementations are compiled.
 ### Core values and ABI
 
 [`alloy-core`](https://docs.rs/alloy-core/latest/alloy_core/) supplies addresses, byte strings,
-fixed-width integers, hashes, ABI codecs, JSON ABI types, and the [`sol!` macro](https://docs.rs/alloy/latest/alloy/macro.sol.html).
+fixed-width integers, hashes, ABI codecs, JSON ABI types, and the [`sol!` macro](https://docs.rs/alloy-sol-macro/latest/alloy_sol_macro/macro.sol.html).
 These pieces can be used without a provider.
 
 ### Consensus and networks

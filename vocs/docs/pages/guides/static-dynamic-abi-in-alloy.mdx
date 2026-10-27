@@ -85,7 +85,7 @@ let calldata = setStructCall {
 }.abi_encode();
 ```
 
-We've just imported a Solidity struct straight into the Rust code. You can use [`cast interface`](https://book.getfoundry.sh/reference/cast/cast-interface) CLI to generate Solidity snippets for any verified contract:
+We've just imported a Solidity struct straight into the Rust code. You can use [`cast interface`](https://getfoundry.sh/reference/cast/interface) CLI to generate Solidity snippets for any verified contract:
 
 :::code-group
 
@@ -170,7 +170,7 @@ sol!(
 
 ### Deploying Smart Contract with `sol!` macro
 
-To deploy a smart contract, you must use its _"build artifact file"_. It's a JSON file you can generate by running the [`forge build` command](https://book.getfoundry.sh/reference/forge/forge-build):
+To deploy a smart contract, you must use its _"build artifact file"_. It's a JSON file you can generate by running the [`forge build` command](https://getfoundry.sh/reference/forge/build):
 
 ```shell
 forge build contracts/FlashBotsMultiCall.sol
